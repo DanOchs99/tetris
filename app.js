@@ -1,10 +1,18 @@
 const express = require('express')
-const app = express()
+const PORT = process.env.PORT || 8080
 
-const PORT = process.env.PORT || 3000
+const app = express()
+const mustacheExpress = require('mustache-express')
+
+app.use(express.static('public'))
+
+// configure view engine
+app.engine('mustache', mustacheExpress())
+app.set('views', './views')
+app.set('view engine', 'mustache')
 
 app.get('/',(req,res) => {
-    res.send("Root route!")
+    res.render('index')
 })
 
 app.listen(PORT, () => {
