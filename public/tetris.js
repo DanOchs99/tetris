@@ -22,9 +22,10 @@ const arena = createMatrix(12, 20)
 
 // start with an 'I' @ (5,5)
 const player = {
-    pos: {x: 5, y: 5},
+    pos: {x: 4, y: 0},
     matrix: createPiece('I'),
 }
+
 
 // maps controls 
 document.addEventListener('keydown', event => {
@@ -38,8 +39,11 @@ document.addEventListener('keydown', event => {
         playerRotate(-1);
     } else if (event.keyCode === 87) {
         playerRotate(1);
+    } else if  (event.keyCode === 82) {
+        fastDrop()
     }
 });
+
 
 // FUNCTION DEFINITIONS
 // create a falling piece
@@ -181,8 +185,24 @@ function playerDrop() {
         merge(arena, player)
         playerReset()
         arenaSweep()
+        dropInterval = 500
     }
     dropCounter = 0
+}
+
+function fastDrop() {
+    setTimeout(fastSpeed)
+    if  (collide(arena, player)){
+        player.pos.y--
+        merge(arena, player)
+        playerReset()
+        arenaSweep()
+    }
+}
+
+function fastSpeed() {
+
+    dropInterval = 4
 }
 
 //move a falling piece in x-axis
@@ -238,6 +258,7 @@ let lastTime = 0
 // main game loop function
 function update(time = 0) {
     const deltaTime = time - lastTime
+    //console.log(deltaTime)
     lastTime=time
 
     dropCounter  += deltaTime
@@ -245,9 +266,10 @@ function update(time = 0) {
         //player.pos.y++
         playerDrop()
         dropCounter = 0
-    }
+    } 
     draw()
     requestAnimationFrame(update)
+    return deltaTime
 }
 
 // entry call to kick off the game

@@ -1,8 +1,5 @@
 const express = require('express')
-
-require('dotenv').config()
-const PORT = process.env.PORT || 8080
-const DATABASE_URL = process.env.DATABASE_URL
+const PORT = process.env.PORT || 3000
 
 const app = express()
 const mustacheExpress = require('mustache-express')
