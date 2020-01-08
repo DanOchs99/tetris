@@ -242,7 +242,8 @@ function update(time = 0) {
 
     dropCounter  += deltaTime
     if (dropCounter > dropInterval) {
-        player.pos.y++
+        //player.pos.y++
+        playerDrop()
         dropCounter = 0
     }
     draw()
