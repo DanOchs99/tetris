@@ -3,10 +3,46 @@
 const canvas = document.getElementById('tetris')
 const context = canvas.getContext('2d')
 
-
-
 context.scale(20, 20)
 
+// colors for the pieces
+const colors = [
+    null,
+    'red',
+    'blue',
+    'green',
+    'pink',
+    'yellow',
+    'purple',
+    'orange',
+]
+
+// keeps track of player's (piece) position in the canvas
+const arena = createMatrix(12, 20)
+
+// start with an 'I' @ (5,5)
+const player = {
+    pos: {x: 5, y: 5},
+    matrix: createPiece('I'),
+}
+
+// maps controls 
+document.addEventListener('keydown', event => {
+    if (event.keyCode === 37) {
+        playerMove(-1);
+    } else if (event.keyCode === 39) {
+        playerMove(1);
+    } else if (event.keyCode === 40) {
+        playerDrop();
+    } else if (event.keyCode === 81) {
+        playerRotate(-1);
+    } else if (event.keyCode === 87) {
+        playerRotate(1);
+    }
+});
+
+// FUNCTION DEFINITIONS
+// create a falling piece
 function createPiece(type) {
     if (type === 'I') {
         return [
@@ -52,10 +88,6 @@ function createPiece(type) {
         ]
     }
 }
-const player = {
-    pos: {x: 5, y: 5},
-    matrix: createPiece('I'),
-}
 
 function arenaSweep() {
     let rowCount = 1
@@ -90,8 +122,7 @@ function draw(){
     drawMatrix(player.matrix, player.pos)
 }
 
-
-//draws the pieces
+//draw a matrix starting at offset - either the arena @ (0,0) or the falling piece at (x,y)
 function drawMatrix(matrix, offset){
     matrix.forEach((row, y) =>{
         row.forEach((value, x) =>{
@@ -103,7 +134,7 @@ function drawMatrix(matrix, offset){
     })
 }
 
-// check for collisions of walls
+// check for collisions of walls - fires on left or right move and on rotate
 function collide(arena, player) {
     const m = player.matrix
     const o = player.pos
@@ -119,11 +150,7 @@ function collide(arena, player) {
     return false
 }
 
-
-
-// keeps track of player's (piece) position in the canvas
-const arena = createMatrix(12, 20)
-
+// adds the falling piece to the arena
 function merge (arena, player) {
     player.matrix.forEach((row, y) => { 
         row.forEach((value, x) => {
@@ -134,7 +161,7 @@ function merge (arena, player) {
     })
 }
 
-// drops pieces
+// drops pieces - this starts a new drop
 function playerReset() {
     const pieces = 'TJLOSZI'
     player.matrix = createPiece(pieces[pieces.length * Math.random() | 0])
@@ -158,7 +185,7 @@ function playerDrop() {
     dropCounter = 0
 }
 
-//moves falling piece in x axys
+//move a falling piece in x-axis
 function playerMove(dir) {
     player.pos.x += dir
     if (collide(arena, player)){
@@ -166,7 +193,7 @@ function playerMove(dir) {
     }
 }
 
-// allows for player's(piece) rotation
+// rotate a falling piece
 function playerRotate(dir) {
     const pos = player.pos.x
     let offset = 1
@@ -201,11 +228,14 @@ function rotate(matrix, dir) {
         matrix.reverse();
     }
 }
+
+// THIS STARTS THE MAIN GAME LOOP
+// game initialization
 let dropCounter = 0
 let dropInterval = 500 // 0.5 seconds
 let lastTime = 0
 
-// falling piece
+// main game loop function
 function update(time = 0) {
     const deltaTime = time - lastTime
     lastTime=time
@@ -219,32 +249,5 @@ function update(time = 0) {
     requestAnimationFrame(update)
 }
 
-const colors = [
-    null,
-    'red',
-    'blue',
-    'green',
-    'pink',
-    'yellow',
-    'purple',
-    'orange',
-]
-
-
-// maps controls 
-document.addEventListener('keydown', event => {
-    if (event.keyCode === 37) {
-        playerMove(-1);
-    } else if (event.keyCode === 39) {
-        playerMove(1);
-    } else if (event.keyCode === 40) {
-        playerDrop();
-    } else if (event.keyCode === 81) {
-        playerRotate(-1);
-    } else if (event.keyCode === 87) {
-        playerRotate(1);
-    }
-});
-
+// entry call to kick off the game
 update()
-
