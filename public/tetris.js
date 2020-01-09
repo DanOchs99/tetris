@@ -43,11 +43,11 @@ document.addEventListener('keydown', event => {
     }
 });
 
-canvas.addEventListener('onclick', event => {
+canvas.addEventListener('click', event => {
     // handler for clicks/taps in the canvas
     console.log(event)
-    console.log(event.clientX)
-    console.log(event.clientY)
+    console.log(`cw: ${canvas.width} ch: ${canvas.height}`)
+    console.log(`click_x: ${event.clientX} click_y: ${event.clientY}`)
 })
 
 // MODEL FUNCTIONS
