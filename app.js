@@ -60,6 +60,34 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  db.oneOrNone("SELECT username, password FROM users WHERE username = $1", [
+    username
+  ]).then(userLoggingIn => {
+    if (userLoggingIn) {
+      bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
+        if (passwordsMatch) {
+          //req.session.isAuthenticated = true;
+          res.redirect("/");
+        } else {
+          res.render("login", {
+            message:
+              "Credentials invalid, please enter a valid username and password"
+          });
+        }
+      });
+    } else {
+      res.render("login", {
+        message:
+          "Credentials invalid, please enter a valid username and password"
+      });
+    }
+  });
+});
+
 app.get("/leaderboard", (req, res) => {
   res.render("leaderboard");
 });
