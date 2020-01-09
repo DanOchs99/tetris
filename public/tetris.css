@@ -4,3 +4,9 @@ canvas { width: 48vh;
          background-color: black;
 }
 
+.controls {
+    width: 48vh;
+    margin: 10px 10px 10px 10px;
+}
+
+
