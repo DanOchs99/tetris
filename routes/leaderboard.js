@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   //update with correct view file
-  res.render("mustachefile");
+  res.render("leaderboard");
 });
 
 router.post("/addtoboard", (req, res) => {
