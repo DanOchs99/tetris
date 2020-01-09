@@ -1,7 +1,11 @@
-//create canvas
+//get the canvas, create a context for drawing on it
 const canvas = document.getElementById('tetris')
 //const context = canvas.getContext('2d',{alpha: false})
 const context = canvas.getContext('2d')
+
+const rot_counterclock_button = document.getElementById('rot_counterclock_button')
+const fast_drop_button = document.getElementById('fast_drop_button')
+const rot_clockwise_button = document.getElementById('rot_clockwise_button')
 
 // colors for the pieces
 // these are the classic game colors
@@ -61,6 +65,16 @@ canvas.addEventListener('click', event => {
     else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x < (fall_x + 10))) {
         playerMove(-1);
     }
+})
+
+rot_counterclock_button.addEventListener('click', event => {
+    playerRotate(-1);
+})
+rot_clockwise_button.addEventListener('click', event => {
+    playerRotate(1);
+})
+fast_drop_button.addEventListener('click', event => {
+    fastDrop()
 })
 
 // MODEL FUNCTIONS
