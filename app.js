@@ -29,16 +29,22 @@ app.engine("mustache", mustacheExpress());
 app.set("views", "./views");
 app.set("view engine", "mustache");
 
+//bcrypt
+const bcrypt = require("bcrypt");
+const SALT_ROUNDS = 10;
+
 app.post("/register", (req, res) => {
   console.log(req.body);
   let username = req.body.username;
   let password = req.body.password;
 
-  db.none("INSERT INTO users(username, password) VALUES($1, $2);", [
-    username,
-    password
-  ]).then(() => {
-    res.redirect("/login");
+  bcrypt.hash(password, SALT_ROUNDS).then(hash => {
+    db.none("INSERT INTO users(username, password) VALUES($1, $2);", [
+      username,
+      hash
+    ]).then(() => {
+      res.redirect("/login");
+    });
   });
 });
 
