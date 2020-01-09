@@ -46,9 +46,14 @@ document.addEventListener('keydown', event => {
 
 canvas.addEventListener('click', event => {
     // handler for clicks/taps in the canvas
-    console.log(event)
-    console.log(`cw: ${canvas.width} ch: ${canvas.height}`)
-    console.log(`click_x: ${event.clientX} click_y: ${event.clientY}`)
+    //console.log(`canvas width: ${canvas.width} canvas height: ${canvas.height}`)
+    //console.log(`clientX: ${event.clientX} clientY: ${event.clientY}`)
+    //console.log(`offsetLeft: ${event.target.offsetLeft} offsetTop: ${event.target.offsetTop}`)
+    //console.log(`offsetWidth: ${event.target.offsetWidth} offsetHeight: ${event.target.offsetHeight}`)
+    // translate to pixel buffer coords
+    let tap_x = ((event.clientX - event.target.offsetLeft) / event.target.offsetWidth) * canvas.width
+    let tap_y = ((event.clientY - event.target.offsetTop) / event.target.offsetHeight) * canvas.height
+    console.log(`Click at (${tap_x}, ${tap_y})`)
 })
 
 // MODEL FUNCTIONS
