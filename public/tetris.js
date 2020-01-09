@@ -109,6 +109,7 @@ function arenaSweep() {
 
         player.score +=  100
 
+
     }
 }
 
