@@ -44,6 +44,25 @@ document.addEventListener('keydown', event => {
     }
 });
 
+canvas.addEventListener('click', event => {
+    // handler for clicks/taps in the canvas
+
+    // translate to pixel buffer coords
+    let tap_x = ((event.clientX - event.target.offsetLeft) / event.target.offsetWidth) * canvas.width
+    let tap_y = ((event.clientY - event.target.offsetTop) / event.target.offsetHeight) * canvas.height
+    let fall_x = player.pos.x * 20
+    let fall_y = player.pos.y * 20
+    if (tap_y > (fall_y + 40)) {
+        playerDrop()
+    }
+    else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x > (fall_x + 10))) {
+        playerMove(1);
+    }
+    else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x < (fall_x + 10))) {
+        playerMove(-1);
+    }
+})
+
 // MODEL FUNCTIONS
 // create a falling piece
 function createPiece(type) {
