@@ -4,13 +4,17 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
 const DATABASE_URL = process.env.DATABASE_URL;
+console.log(DATABASE_URL);
 
 const pgp = require("pg-promise")();
+pgp.pg.defaults.ssl = true;
 const app = express();
 const mustacheExpress = require("mustache-express");
 const session = require("express-session");
 const path = require("path");
+const db = pgp(DATABASE_URL);
 
+app.use(express.urlencoded({extended: false}));
 //routers
 const leaderboardRouter = require("./routes/leaderboard");
 app.use("/leaderboard", leaderboardRouter);
@@ -24,9 +28,34 @@ app.engine('mustache', mustacheExpress())
 app.set('views', './views')
 app.set('view engine', 'mustache')
 
-app.get('/',(req,res) => {
-    res.render('index')
-})
+app.post("/register", (req, res) => {
+  console.log(req.body);
+  let username = req.body.username;
+  let password = req.body.password;
+
+  db.none("INSERT INTO users(username, password) VALUES($1, $2);", [
+    username,
+    password
+  ]).then(() => {
+    res.redirect("/login");
+  });
+});
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+app.get("/registration", (req, res) => {
+  res.render("register");
+});
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.get("/leaderboard", (req, res) => {
+  res.render("leaderboard");
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
