@@ -55,23 +55,24 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
-  let checkSignIn = db
-    .oneOrNone(
-      `SELECT username, password FROM users WHERE username = '${username}' AND password = '${password};'`
-    )
-    .then(() => {
-      // console.log(typeof checkSignIn);
-      if (checkSignIn.username) {
-        if (req.session) {
-          req.session.isAuthenticated = true;
-          res.redirect("/leaderboard");
-        } else {
-          res.redirect("/login");
-        }
+  console.log(username);
+  console.log(password);
+  db.oneOrNone(
+    `SELECT username, password FROM users WHERE username = $1 AND password = $2;`,
+    [username, password]
+  ).then(singleUser => {
+    console.log(singleUser);
+    if (singleUser) {
+      if (req.session) {
+        req.session.isAuthenticated = true;
+        res.redirect("/leaderboard");
       } else {
         res.redirect("/login");
       }
-    });
+    } else {
+      res.redirect("/login");
+    }
+  });
 });
 
 app.get("/", (req, res) => {
