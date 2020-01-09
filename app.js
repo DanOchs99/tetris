@@ -2,12 +2,14 @@ const express = require("express");
 const PORT = process.env.PORT || 8080;
 
 const DATABASE_URL = process.env.DATABASE_URL;
+console.log(DATABASE_URL);
 
 const pgp = require("pg-promise")();
 const app = express();
 const mustacheExpress = require("mustache-express");
 const session = require("express-session");
 const path = require("path");
+const db = pgp(DATABASE_URL);
 
 //routers
 const leaderboardRouter = require("./routes/leaderboard");
@@ -32,6 +34,10 @@ app.get("/registration", (req, res) => {
 
 app.get("/login", (req, res) => {
   res.render("login");
+});
+
+app.get("/leaderboard", (req, res) => {
+  res.render("leaderboard");
 });
 
 app.listen(PORT, () => {
