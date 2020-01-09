@@ -43,6 +43,11 @@ document.addEventListener('keydown', event => {
     }
 });
 
+canvas.addEventListener('onclick', event => {
+    // handler for clicks/taps in the canvas
+    console.log(event.clientX)
+})
+
 // MODEL FUNCTIONS
 // create a falling piece
 function createPiece(type) {
