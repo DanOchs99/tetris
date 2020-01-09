@@ -42,7 +42,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("game");
 });
 
 app.get("/registration", (req, res) => {
