@@ -24,9 +24,9 @@ app.use("/play", playRouter);
 app.use(express.static("public"));
 
 // configure view engine
-app.engine("mustache", mustacheExpress());
-app.set("views", "./views");
-app.set("view engine", "mustache");
+app.engine('mustache', mustacheExpress())
+app.set('views', './views')
+app.set('view engine', 'mustache')
 
 app.post("/register", (req, res) => {
   console.log(req.body);
@@ -58,5 +58,5 @@ app.get("/leaderboard", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    console.log(`Server running on port ${PORT}`)
+})
