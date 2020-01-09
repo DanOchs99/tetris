@@ -20,22 +20,14 @@ app.use("/play", playRouter);
 app.use(express.static("public"));
 
 // configure view engine
-app.engine("mustache", mustacheExpress());
-app.set("views", "./views");
-app.set("view engine", "mustache");
+app.engine('mustache', mustacheExpress())
+app.set('views', './views')
+app.set('view engine', 'mustache')
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-app.get("/registration", (req, res) => {
-  res.render("register");
-});
-
-app.get("/login", (req, res) => {
-  res.render("login");
-});
+app.get('/',(req,res) => {
+    res.render('index')
+})
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    console.log(`Server running on port ${PORT}`)
+})

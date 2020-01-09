@@ -24,6 +24,7 @@ const arena = createMatrix(12, 20)
 const player = {
     pos: {x: 4, y: 0},
     matrix: createPiece('I'),
+    score : 0
 }
 
 // map keyboard controls 
@@ -110,7 +111,18 @@ function arenaSweep() {
         const row = arena.splice(y, 1)[0].fill(0)
         arena.unshift(row)
         ++y
+
+        rowCount = 2
+
+        player.score +=  100
+
+
     }
+}
+
+function updateScore() {
+    document.getElementById('score').innerHTML = player.score
+
 }
 
 function createMatrix(w, h) {
@@ -157,6 +169,7 @@ function playerReset() {
                    (player.matrix[0].length / 2 | 0)
     if (collide(arena, player)) {
         arena.forEach(row => row.fill(0))
+        player.score = 0
     }
 }
 
@@ -168,6 +181,7 @@ function playerDrop() {
         merge(arena, player)
         playerReset()
         arenaSweep()
+        updateScore()
         dropInterval = 500
     }
     dropCounter = 0
@@ -185,7 +199,7 @@ function fastDrop() {
 
 function fastSpeed() {
 
-    dropInterval = 4
+    dropInterval = 0.1
 }
 
 //move a falling piece in x-axis
