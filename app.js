@@ -14,7 +14,7 @@ const session = require("express-session");
 const path = require("path");
 const db = pgp(DATABASE_URL);
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended: false}));
 //routers
 const leaderboardRouter = require("./routes/leaderboard");
 app.use("/leaderboard", leaderboardRouter);
