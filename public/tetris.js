@@ -38,6 +38,8 @@ document.addEventListener('keydown', event => {
         playerRotate(-1);
     } else if (event.keyCode === 87) {
         playerRotate(1);
+    } else if  (event.keyCode === 82) {
+        fastDrop()
     }
 });
 
@@ -159,8 +161,24 @@ function playerDrop() {
         merge(arena, player)
         playerReset()
         arenaSweep()
+        dropInterval = 500
     }
     dropCounter = 0
+}
+
+function fastDrop() {
+    setTimeout(fastSpeed)
+    if  (collide(arena, player)){
+        player.pos.y--
+        merge(arena, player)
+        playerReset()
+        arenaSweep()
+    }
+}
+
+function fastSpeed() {
+
+    dropInterval = 4
 }
 
 //move a falling piece in x-axis
@@ -250,15 +268,17 @@ let lastTime = 0
 // main game loop function
 function update(time = 0) {
     const deltaTime = time - lastTime
+    //console.log(deltaTime)
     lastTime=time
 
     dropCounter  += deltaTime
     if (dropCounter > dropInterval) {
         playerDrop()
         dropCounter = 0
-    }
+    } 
     draw()
     requestAnimationFrame(update)
+    return deltaTime
 }
 
 // entry call to kick off the game
