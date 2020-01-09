@@ -1,32 +1,32 @@
-
 //create canvas
 const canvas = document.getElementById('tetris')
+//const context = canvas.getContext('2d',{alpha: false})
 const context = canvas.getContext('2d')
 
-context.scale(20, 20)
-
 // colors for the pieces
+// these are the classic game colors
 const colors = [
     null,
     'red',
-    'blue',
-    'green',
-    'pink',
-    'yellow',
     'purple',
-    'orange',
+    'white',
+    'blue',
+    'cyan',
+    'green',
+    'yellow'
 ]
 
-// keeps track of player's (piece) position in the canvas
+// this is the model for the static blocks
 const arena = createMatrix(12, 20)
 
-// start with an 'I' @ (5,5)
+// this is the model for the falling piece
+// initialize with an 'I' @ (4,0)
 const player = {
-    pos: {x: 5, y: 5},
+    pos: {x: 4, y: 0},
     matrix: createPiece('I'),
 }
 
-// maps controls 
+// map keyboard controls 
 document.addEventListener('keydown', event => {
     if (event.keyCode === 37) {
         playerMove(-1);
@@ -41,7 +41,7 @@ document.addEventListener('keydown', event => {
     }
 });
 
-// FUNCTION DEFINITIONS
+// MODEL FUNCTIONS
 // create a falling piece
 function createPiece(type) {
     if (type === 'I') {
@@ -105,33 +105,11 @@ function arenaSweep() {
 }
 
 function createMatrix(w, h) {
-
     const matrix = []
     while (h--) {
         matrix.push(new Array(w).fill(0))
     }
     return matrix
-}
-
-//draws the entire canvas
-function draw(){
-
-    context.fillStyle = '#000'
-    context.fillRect(0, 0, canvas.width, canvas.height)
-    drawMatrix(arena, {x: 0, y: 0})
-    drawMatrix(player.matrix, player.pos)
-}
-
-//draw a matrix starting at offset - either the arena @ (0,0) or the falling piece at (x,y)
-function drawMatrix(matrix, offset){
-    matrix.forEach((row, y) =>{
-        row.forEach((value, x) =>{
-            if (value !== 0) {
-                context.fillStyle = colors[value]
-                context.fillRect(x + offset.x, y + offset.y, 1, 1)
-            }
-        })
-    })
 }
 
 // check for collisions of walls - fires on left or right move and on rotate
@@ -229,6 +207,40 @@ function rotate(matrix, dir) {
     }
 }
 
+// VIEW FUNCTIONS
+//draws the entire canvas
+function draw() {
+    //context.fillStyle = 'black'
+    //context.fillRect(0, 0, canvas.width, canvas.height)
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
+    drawMatrix(arena, {x: 0, y: 0})
+    drawMatrix(player.matrix, player.pos)
+}
+
+//draw a matrix starting at offset - either the arena @ (0,0) or the falling piece at (x,y)
+function drawMatrix(matrix, offset) {
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) {
+                // compute drawing coordinates
+                // model x-axis runs from 0 to 11
+                // model y-axis runs from 0 to 19
+                let block_size = 20
+                let x1 = (x + offset.x) * block_size
+                let y1 = (y + offset.y) * block_size
+                // draw the colored block
+                context.fillStyle = colors[value]
+                context.fillRect(x1, y1, block_size, block_size)
+                // draw a grey border
+                context.lineWidth = 1
+                context.strokeStyle = 'grey'
+                context.strokeRect(x1, y1, block_size, block_size)
+            }
+        })
+    })
+}
+
 // THIS STARTS THE MAIN GAME LOOP
 // game initialization
 let dropCounter = 0
@@ -242,7 +254,6 @@ function update(time = 0) {
 
     dropCounter  += deltaTime
     if (dropCounter > dropInterval) {
-        //player.pos.y++
         playerDrop()
         dropCounter = 0
     }
