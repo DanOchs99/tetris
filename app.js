@@ -1,6 +1,8 @@
 const express = require("express");
 const PORT = process.env.PORT || 8080;
 
+const DATABASE_URL = process.env.DATABASE_URL;
+
 const pgp = require("pg-promise")();
 const app = express();
 const mustacheExpress = require("mustache-express");
