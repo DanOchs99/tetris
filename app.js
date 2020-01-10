@@ -5,7 +5,6 @@ require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 const DATABASE_URL = process.env.DATABASE_URL;
 const SESSION_SECRET = process.env.SESSION_SECRET;
-console.log(SESSION_SECRET);
 
 const pgp = require("pg-promise")();
 pgp.pg.defaults.ssl = true;
@@ -76,10 +75,10 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  db.oneOrNone(
-    "SELECT username, password FROM users WHERE username = $1 AND password = $2",
-    [username, password]
-  ).then(userLoggingIn => {
+  db.oneOrNone(`SELECT username, password FROM users WHERE username = $1`, [
+    username,
+    password
+  ]).then(userLoggingIn => {
     console.log(userLoggingIn);
     if (userLoggingIn) {
       bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
@@ -94,7 +93,7 @@ app.post("/login", (req, res) => {
         }
       });
     } else {
-      res.render("game", {
+      res.render("register", {
         message:
           "Credentials invalid, please enter a valid username and password"
       });
