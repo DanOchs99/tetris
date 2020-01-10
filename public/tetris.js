@@ -10,16 +10,15 @@ const fast_drop_button = document.getElementById('fast_drop_button')
 const rot_clockwise_button = document.getElementById('rot_clockwise_button')
 
 // colors for the pieces
-// these are the classic game colors
 const colors = [
     null,
-    '#DF332F',
-    '#356EB3',
-    '#EE8A18',
-    '#26AE8A',
-    '#EABA18',
-    '#814494',
-    '#F6F8FF'
+    '#DF332F',    // 1 = red = 'I'
+    '#356EB3',    // 2 = blue = 'L'
+    '#EE8A18',    // 3 = orange = 'J'
+    '#26AE8A',    // 4 = green = 'O'
+    '#EABA18',    // 5 = yellow = 'Z'
+    '#814494',    // 6 = purple = 'S'
+    '#F6F8FF'     // 7 = white = 'T'
 ]
 
 // this is the model for the static blocks
@@ -51,9 +50,8 @@ document.addEventListener('keydown', event => {
     }
 });
 
+// event handler for clicks/taps in the canvas
 canvas.addEventListener('click', event => {
-    // handler for clicks/taps in the canvas
-
     // translate to pixel buffer coords
     let tap_x = ((event.clientX - event.target.offsetLeft) / event.target.offsetWidth) * canvas.width
     let tap_y = ((event.clientY - event.target.offsetTop) / event.target.offsetHeight) * canvas.height
@@ -70,6 +68,7 @@ canvas.addEventListener('click', event => {
     }
 })
 
+// event handlers for button controls below the main canvas
 rot_counterclock_button.addEventListener('click', event => {
     playerRotate(-1);
 })
