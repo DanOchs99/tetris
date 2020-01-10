@@ -4,7 +4,8 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
 const DATABASE_URL = process.env.DATABASE_URL;
-console.log(DATABASE_URL);
+const SESSION_SECRET = process.env.SESSION_SECRET;
+console.log(SESSION_SECRET);
 
 const pgp = require("pg-promise")();
 pgp.pg.defaults.ssl = true;
@@ -15,6 +16,17 @@ const path = require("path");
 const db = pgp(DATABASE_URL);
 
 app.use(express.urlencoded({ extended: false }));
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+  })
+);
+
+app.use(express.urlencoded({ extended: false }));
+
+function authenticate() {}
 //routers
 const leaderboardRouter = require("./routes/leaderboard");
 app.use("/leaderboard", leaderboardRouter);
@@ -49,7 +61,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("game");
 });
 
 app.get("/registration", (req, res) => {
@@ -64,14 +76,16 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  db.oneOrNone("SELECT username, password FROM users WHERE username = $1", [
-    username
-  ]).then(userLoggingIn => {
+  db.oneOrNone(
+    "SELECT username, password FROM users WHERE username = $1 AND password = $2",
+    [username, password]
+  ).then(userLoggingIn => {
+    console.log(userLoggingIn);
     if (userLoggingIn) {
       bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
         if (passwordsMatch) {
-          //req.session.isAuthenticated = true;
-          res.redirect("/");
+          req.session.isAuthenticated = true;
+          res.redirect("game");
         } else {
           res.render("login", {
             message:
@@ -80,7 +94,7 @@ app.post("/login", (req, res) => {
         }
       });
     } else {
-      res.render("login", {
+      res.render("game", {
         message:
           "Credentials invalid, please enter a valid username and password"
       });
