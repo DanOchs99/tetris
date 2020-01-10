@@ -292,18 +292,20 @@ function rotate(matrix, dir) {
 }
 
 // VIEW FUNCTIONS
-//draws the entire canvas
+//re-draws both the game board and the next piece canvases
 function draw() {
 
     //context.fillStyle = 'black'
     //context.fillRect(0, 0, canvas.width, canvas.height)
     context.clearRect(0, 0, canvas.width, canvas.height)
+    //context.stroke()
 
     drawMatrix(arena, {x: 0, y: 0})
     drawMatrix(player.matrix, player.pos)
     drawMatrixNext(player.next, {x: 1, y:1})
 }
 
+// draw the next piece
 function drawMatrixNext(matrix, offset) {
     contextNext.fillStyle = "black"
     contextNext.fillRect(0,0, canvasNext.width, canvasNext.height)
@@ -312,8 +314,6 @@ function drawMatrixNext(matrix, offset) {
         row.forEach((value, x) => {
             if (value !== 0) {
                 // compute drawing coordinates
-                // model x-axis runs from 0 to 11
-                // model y-axis runs from 0 to 19
                 let block_size = 20
                 let x1 = (x + offset.x) * block_size
                 let y1 = (y + offset.y) * block_size
@@ -322,7 +322,7 @@ function drawMatrixNext(matrix, offset) {
                 contextNext.fillRect(x1, y1, block_size, block_size)
                 // draw a grey border
                 contextNext.lineWidth = 2
-                contextNext.strokeStyle = 'black'
+                contextNext.strokeStyle = '#000000'
                 contextNext.strokeRect(x1, y1, block_size, block_size)
             }
         })
@@ -345,16 +345,62 @@ function drawMatrix(matrix, offset) {
                 context.fillRect(x1, y1, block_size, block_size)
                 // draw a grey border
                 context.lineWidth = 2
-                context.strokeStyle = 'black'
+                context.strokeStyle = '#000000'
+                context.beginPath()
                 context.strokeRect(x1, y1, block_size, block_size)
 
-                // hit box debug code
+                // touch interface debug code
+                context.lineWidth = 1
+                context.strokeStyle = 'cyan'
+                let line = []
+                line.push((player.pos.x * 20) - 5)
+                line.push((player.pos.y * 20) - 5)
+                line.push((player.pos.x * 20) + 5)
+                line.push((player.pos.y * 20) + 5)
+                clipDebug(line)
+                context.beginPath()
+                context.moveTo(line[0],line[1])
+                context.lineTo(line[2],line[3])
+                context.stroke()
+                line = []
+                line.push((player.pos.x * 20) + 5)
+                line.push((player.pos.y * 20) - 5)
+                line.push((player.pos.x * 20) - 5)
+                line.push((player.pos.y * 20) + 5)
+                clipDebug(line)
+                context.beginPath()
+                context.moveTo(line[0],line[1])
+                context.lineTo(line[2],line[3])
+                context.stroke()
 
-
-                // end hit box debug code
+                // end touch interface debug code
             }
         })
     })
+}
+
+// take an array [x1,y1,x2,y2] representing a line to draw and clip to the edges of the game board
+function clipDebug(line) {
+    if (line[0] < 0) {
+        line[0] = 0
+    } else if (line[0] > canvas.width) {
+        line[0] = canvas.width    
+    }
+    if (line[1] < 0) {
+        line[1] = 0
+    } else if (line[1] > canvas.height) {
+        line[1] = canvas.height    
+    }
+    if (line[2] < 0) {
+        line[2] = 0
+    } else if (line[2] > canvas.width) {
+        line[2] = canvas.width    
+    }
+    if (line[3] < 0) {
+        line[3] = 0
+    } else if (line[3] > canvas.height) {
+        line[3] = canvas.height    
+    }
 }
 
 // THIS STARTS THE MAIN GAME LOOP
