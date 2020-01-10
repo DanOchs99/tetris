@@ -63,7 +63,7 @@ canvas.addEventListener('click', event => {
     else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x > (fall_x + 10))) {
         playerMove(1);
     }
-    else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x < (fall_x + 10))) {
+    else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x < (fall_x - 10))) {
         playerMove(-1);
     }
 })
@@ -323,6 +323,7 @@ function drawMatrixNext(matrix, offset) {
                 // draw a grey border
                 contextNext.lineWidth = 2
                 contextNext.strokeStyle = '#000000'
+                context.beginPath()
                 contextNext.strokeRect(x1, y1, block_size, block_size)
             }
         })
@@ -348,39 +349,103 @@ function drawMatrix(matrix, offset) {
                 context.strokeStyle = '#000000'
                 context.beginPath()
                 context.strokeRect(x1, y1, block_size, block_size)
-
-                // touch interface debug code
-                context.lineWidth = 1
-                context.strokeStyle = 'cyan'
-                let line = []
-                line.push((player.pos.x * 20) - 5)
-                line.push((player.pos.y * 20) - 5)
-                line.push((player.pos.x * 20) + 5)
-                line.push((player.pos.y * 20) + 5)
-                clipDebug(line)
-                context.beginPath()
-                context.moveTo(line[0],line[1])
-                context.lineTo(line[2],line[3])
-                context.stroke()
-                line = []
-                line.push((player.pos.x * 20) + 5)
-                line.push((player.pos.y * 20) - 5)
-                line.push((player.pos.x * 20) - 5)
-                line.push((player.pos.y * 20) + 5)
-                clipDebug(line)
-                context.beginPath()
-                context.moveTo(line[0],line[1])
-                context.lineTo(line[2],line[3])
-                context.stroke()
-
-                // end touch interface debug code
             }
         })
     })
+    // touch interface debug code
+    context.lineWidth = 1
+    context.strokeStyle = 'cyan'
+    // draw an 'x' @ player.pos
+    let line = []
+    line.push((player.pos.x * 20) - 5)
+    line.push((player.pos.y * 20) - 5)
+    line.push((player.pos.x * 20) + 5)
+    line.push((player.pos.y * 20) + 5)
+    clipToArena(line)
+    context.beginPath()
+    context.moveTo(line[0],line[1])
+    context.lineTo(line[2],line[3])
+    context.stroke()
+    line = []
+    line.push((player.pos.x * 20) + 5)
+    line.push((player.pos.y * 20) - 5)
+    line.push((player.pos.x * 20) - 5)
+    line.push((player.pos.y * 20) + 5)
+    clipToArena(line)
+    context.beginPath()
+    context.moveTo(line[0], line[1])
+    context.lineTo(line[2], line[3])
+    context.stroke()
+
+    // drop hit box
+    line = []
+    line.push(0)
+    if (((player.pos.y * 20) + 40) > 400) {
+        line.push(400) 
+    }
+    else {
+        line.push((player.pos.y * 20) + 40)
+    }
+    line.push(canvas.width)
+    line.push(canvas.height - line[1])
+    context.beginPath()
+    context.rect(line[0], line[1], line[2], line[3])
+    context.stroke()
+
+    context.strokeStyle = 'yellow'
+    // left hit box
+    line = []
+    line.push(0)
+    if (((player.pos.y * 20) - 40) < 0) {
+        line.push(0) 
+    }
+    else {
+        line.push((player.pos.y * 20) - 40)
+    }
+    if (((player.pos.x * 20) - 10) < 0) {
+        line.push(0)
+    }
+    else {
+        line.push((player.pos.x * 20) - 10)
+    }
+    if (((player.pos.y * 20) + 40) > canvas.height) {
+        line.push(canvas.height - line[1])
+    }
+    else {
+        line.push(((player.pos.y * 20) + 40) - line[1])
+    }
+    context.beginPath()
+    context.rect(line[0], line[1], line[2], line[3])
+    context.stroke()
+    // right hit box
+    line = []
+    if (((player.pos.x * 20) + 10) > canvas.width) {
+        line.push(canvas.width)
+    }
+    else {
+        line.push((player.pos.x * 20) + 10)
+    }
+    if (((player.pos.y * 20) - 40) < 0) {
+        line.push(0) 
+    }
+    else {
+        line.push((player.pos.y * 20) - 40)
+    }
+    line.push(canvas.width-line[0])
+    if (((player.pos.y * 20) + 40) > canvas.height) {
+        line.push(canvas.height - line[1])
+    }
+    else {
+        line.push(((player.pos.y * 20) + 40) - line[1])
+    }
+    context.beginPath()
+    context.rect(line[0], line[1], line[2], line[3])
+    context.stroke()
+    // end touch interface debug code
 }
 
-// take an array [x1,y1,x2,y2] representing a line to draw and clip to the edges of the game board
-function clipDebug(line) {
+// take an array [x1,y1,x2,y2] representing a line to draw and shift to the edges of the game board
+function clipToArena(line) {
     if (line[0] < 0) {
         line[0] = 0
     } else if (line[0] > canvas.width) {
