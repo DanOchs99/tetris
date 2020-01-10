@@ -84,7 +84,7 @@ app.post("/login", (req, res) => {
       bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
         if (passwordsMatch) {
           req.session.isAuthenticated = true;
-          res.redirect("game");
+          res.redirect("/leaderboard");
         } else {
           res.render("login", {
             message:
