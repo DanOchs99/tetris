@@ -15,14 +15,14 @@ const session = require("express-session");
 const path = require("path");
 const db = pgp(DATABASE_URL);
 
-/*app.use(
+app.use(
   session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true
   })
 );
-*/
+
 app.use(express.urlencoded({ extended: false }));
 
 function authenticate() {}

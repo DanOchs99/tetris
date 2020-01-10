@@ -9,6 +9,10 @@ const rot_counterclock_button = document.getElementById('rot_counterclock_button
 const fast_drop_button = document.getElementById('fast_drop_button')
 const rot_clockwise_button = document.getElementById('rot_clockwise_button')
 
+const rot_counterclock_button = document.getElementById('rot_counterclock_button')
+const fast_drop_button = document.getElementById('fast_drop_button')
+const rot_clockwise_button = document.getElementById('rot_clockwise_button')
+
 // colors for the pieces
 // these are the classic game colors
 const colors = [
