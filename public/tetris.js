@@ -143,14 +143,11 @@ function arenaSweep() {
         rowCount = 2
 
         player.score +=  100
-
-
     }
 }
 
 function updateScore() {
     document.getElementById('score').innerHTML = player.score
-
 }
 
 function createMatrix(w, h) {
@@ -205,9 +202,10 @@ function playerReset() {
         arena.forEach(row => row.fill(0))
         player.score = 0
     }
+    refreshView = true
 }
 
-// checks for collision inside of arena
+// move falling piece down one row
 function playerDrop() {
     player.pos.y++
     if (collide(arena, player)){
@@ -219,6 +217,7 @@ function playerDrop() {
         dropInterval = 700
     }
     dropCounter = 0
+    refreshView = true
 }
 
 function fastDrop() {
@@ -229,19 +228,29 @@ function fastDrop() {
         playerReset()
         arenaSweep()
     }
+    refreshView = true
 }
 
 function fastSpeed() {
-
     dropInterval = 0.1
 }
 
 //move a falling piece in x-axis
 function playerMove(dir) {
     player.pos.x += dir
+    let pM_refresh = true
+
     if (collide(arena, player)){
         player.pos.x -= dir
+        pM_refresh = false
     }
+
+    if (!refreshView) {
+        if (pM_refresh) {
+            refreshView = true
+        }
+    }
+    
 }
 
 // rotate a falling piece
@@ -249,6 +258,7 @@ function playerRotate(dir) {
     const pos = player.pos.x
     let offset = 1
     rotate(player.matrix, dir)
+
     while (collide(arena, player)) {
         player.pos.x += offset
         offset = -(offset + (offset > 0 ? 1 : -1));
@@ -258,6 +268,7 @@ function playerRotate(dir) {
             return
         }
     }
+    refreshView = true
 }
 
 function rotate(matrix, dir) {
@@ -320,8 +331,6 @@ function drawMatrixNext(matrix, offset) {
 
 //draw a matrix starting at offset - either the arena @ (0,0) or the falling piece at (x,y)
 function drawMatrix(matrix, offset) {
-    
-    
     matrix.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value !== 0) {
@@ -348,14 +357,45 @@ function drawMatrix(matrix, offset) {
 let dropCounter = 0
 let dropInterval = 700 // 0.5 seconds
 let lastTime = 0
+let refreshView = true
+
+// performance code
+let frame_count = 0
+let refresh_count = 0
+// end performance code
+
 
 // main game loop function
 function update(time = 0) {
+    // 'time' is provided by requestAnimationFrame, DOMHighResTimeStamp in milliseconds
     const deltaTime = time - lastTime
 
-    // debug code!!
-    console.log(`t: ${time}  lt: ${lastTime} dt: ${deltaTime}`)
-    lastTime=time
+    // performance code
+    //console.log(`t: ${time}  lt: ${lastTime} dt: ${deltaTime}`)
+
+    let curr_sec = Math.floor(time / 1000)
+    let last_sec = Math.floor(lastTime / 1000)
+    if (curr_sec == last_sec) {
+        frame_count += 1
+        if (refreshView) {
+            refresh_count += 1
+        }
+    } else {
+        console.log(`Time: ${last_sec}   Frame counter: ${frame_count}   Refresh counter: ${refresh_count}`)
+        frame_count = 1
+        if (refreshView) {
+            refresh_count = 1
+        }
+        else {
+            refresh_count = 0
+        }
+    }
+    
+    // end performance code
+
+    refreshView = false
+
+    lastTime = time
 
     dropCounter  += deltaTime
     if (dropCounter > dropInterval) {
@@ -364,6 +404,7 @@ function update(time = 0) {
         dropCounter = 0
     } 
     draw()
+
     requestAnimationFrame(update)
     return deltaTime
 }
