@@ -59,7 +59,7 @@ app.post("/register", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
+app.get("/game", (req, res) => {
   res.render("game");
 });
 

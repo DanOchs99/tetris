@@ -32,7 +32,7 @@ const player = {
     next : null,
     score : 0
 }
-
+let globalScore = player.score
 // map keyboard controls 
 document.addEventListener('keydown', event => {
     if (event.keyCode === 37) {
@@ -149,6 +149,11 @@ function arenaSweep() {
 }
 
 function updateScore() {
+    document.getElementById('showScore').innerHTML = player.score
+
+}
+
+function postScore() {
     document.getElementById('score').innerHTML = player.score
 
 }
@@ -216,6 +221,7 @@ function playerDrop() {
         playerReset()
         arenaSweep()
         updateScore()
+        postScore()
         dropInterval = 700
     }
     dropCounter = 0
