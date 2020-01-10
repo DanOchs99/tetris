@@ -352,7 +352,9 @@ let lastTime = 0
 // main game loop function
 function update(time = 0) {
     const deltaTime = time - lastTime
-    //console.log(deltaTime)
+
+    // debug code!!
+    console.log(`t: ${time}  lt: ${lastTime} dt: ${deltaTime}`)
     lastTime=time
 
     dropCounter  += deltaTime
