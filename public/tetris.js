@@ -347,6 +347,11 @@ function drawMatrix(matrix, offset) {
                 context.lineWidth = 2
                 context.strokeStyle = 'black'
                 context.strokeRect(x1, y1, block_size, block_size)
+
+                // hit box debug code
+
+
+                // end hit box debug code
             }
         })
     })
@@ -359,20 +364,26 @@ let dropInterval = 700 // 0.5 seconds
 let lastTime = 0
 let refreshView = true
 
-// performance code
+// variables for performance monitor code
 let frame_count = 0
 let refresh_count = 0
-// end performance code
+// end variables for performance monitor code
 
 
 // main game loop function
 function update(time = 0) {
     // 'time' is provided by requestAnimationFrame, DOMHighResTimeStamp in milliseconds
-    const deltaTime = time - lastTime
+    const deltaTime = time - lastTime    // calc dTime for this cycle
 
-    // performance code
+    dropCounter  += deltaTime    // increment the falling piece move timer
+    if (dropCounter > dropInterval) {    // time move the falling piece down??
+        playerDrop()
+        updateScore()    // this should prob be somewhere else...
+        dropCounter = 0    // reset the drop timer for the next piece; NOT NEEDED already done in playerDrop() 
+    }
+
+    // performance monitor code
     //console.log(`t: ${time}  lt: ${lastTime} dt: ${deltaTime}`)
-
     let curr_sec = Math.floor(time / 1000)
     let last_sec = Math.floor(lastTime / 1000)
     if (curr_sec == last_sec) {
@@ -390,22 +401,16 @@ function update(time = 0) {
             refresh_count = 0
         }
     }
-    
-    // end performance code
+    // end performance monitor code
 
-    refreshView = false
+    if (refreshView) {
+        draw()
+        refreshView = false
+    }
 
     lastTime = time
-
-    dropCounter  += deltaTime
-    if (dropCounter > dropInterval) {
-        playerDrop()
-        updateScore()
-        dropCounter = 0
-    } 
-    draw()
-
     requestAnimationFrame(update)
+
     return deltaTime
 }
 
