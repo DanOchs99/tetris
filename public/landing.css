@@ -1,0 +1,18 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color:	#BF2E29;
+}
+
+.main-section {
+  margin-top: 20px;
+}
+.tetris-text{
+  color: white;
+}
+
+img {
+  width: 512px;
+}
