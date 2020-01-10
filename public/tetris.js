@@ -1,7 +1,13 @@
 //get the canvas, create a context for drawing on it
 const canvas = document.getElementById('tetris')
+const canvasNext = document.getElementById('nextPiece')
 //const context = canvas.getContext('2d',{alpha: false})
 const context = canvas.getContext('2d')
+const contextNext = canvasNext.getContext('2d')
+
+const rot_counterclock_button = document.getElementById('rot_counterclock_button')
+const fast_drop_button = document.getElementById('fast_drop_button')
+const rot_clockwise_button = document.getElementById('rot_clockwise_button')
 
 const rot_counterclock_button = document.getElementById('rot_counterclock_button')
 const fast_drop_button = document.getElementById('fast_drop_button')
@@ -11,13 +17,13 @@ const rot_clockwise_button = document.getElementById('rot_clockwise_button')
 // these are the classic game colors
 const colors = [
     null,
-    'red',
-    'purple',
-    'white',
-    'blue',
-    'cyan',
-    'green',
-    'yellow'
+    '#DF332F',
+    '#356EB3',
+    '#EE8A18',
+    '#26AE8A',
+    '#EABA18',
+    '#814494 ',
+    '#F6F8FF'
 ]
 
 // this is the model for the static blocks
@@ -27,7 +33,8 @@ const arena = createMatrix(12, 20)
 // initialize with an 'I' @ (4,0)
 const player = {
     pos: {x: 4, y: 0},
-    matrix: createPiece('I'),
+    matrix: null,
+    next : null,
     score : 0
 }
 
@@ -189,7 +196,13 @@ function merge (arena, player) {
 // drops pieces - this starts a new drop
 function playerReset() {
     const pieces = 'TJLOSZI'
-    player.matrix = createPiece(pieces[pieces.length * Math.random() | 0])
+    if (player.next === null) {
+        player.matrix = createPiece(pieces[pieces.length * Math.random() | 0])
+    }  else {
+        player.matrix = player.next
+    }
+    player.next = createPiece(pieces[pieces.length * Math.random() | 0])
+    
     player.pos.y = 0
     player.pos.x = (arena[0].length / 2 | 0) -
                    (player.matrix[0].length / 2 | 0)
@@ -208,7 +221,7 @@ function playerDrop() {
         playerReset()
         arenaSweep()
         updateScore()
-        dropInterval = 500
+        dropInterval = 700
     }
     dropCounter = 0
 }
@@ -275,16 +288,45 @@ function rotate(matrix, dir) {
 // VIEW FUNCTIONS
 //draws the entire canvas
 function draw() {
+
     //context.fillStyle = 'black'
     //context.fillRect(0, 0, canvas.width, canvas.height)
     context.clearRect(0, 0, canvas.width, canvas.height)
 
     drawMatrix(arena, {x: 0, y: 0})
     drawMatrix(player.matrix, player.pos)
+    drawMatrixNext(player.next, {x: 1, y:1})
+}
+
+function drawMatrixNext(matrix, offset) {
+    contextNext.fillStyle = "black"
+    contextNext.fillRect(0,0, canvasNext.width, canvasNext.height)
+
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) {
+                // compute drawing coordinates
+                // model x-axis runs from 0 to 11
+                // model y-axis runs from 0 to 19
+                let block_size = 20
+                let x1 = (x + offset.x) * block_size
+                let y1 = (y + offset.y) * block_size
+                // draw the colored block
+                contextNext.fillStyle = colors[value]
+                contextNext.fillRect(x1, y1, block_size, block_size)
+                // draw a grey border
+                contextNext.lineWidth = 2
+                contextNext.strokeStyle = 'black'
+                contextNext.strokeRect(x1, y1, block_size, block_size)
+            }
+        })
+    })
 }
 
 //draw a matrix starting at offset - either the arena @ (0,0) or the falling piece at (x,y)
 function drawMatrix(matrix, offset) {
+    
+    
     matrix.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value !== 0) {
@@ -298,8 +340,8 @@ function drawMatrix(matrix, offset) {
                 context.fillStyle = colors[value]
                 context.fillRect(x1, y1, block_size, block_size)
                 // draw a grey border
-                context.lineWidth = 1
-                context.strokeStyle = 'grey'
+                context.lineWidth = 2
+                context.strokeStyle = 'black'
                 context.strokeRect(x1, y1, block_size, block_size)
             }
         })
@@ -309,7 +351,7 @@ function drawMatrix(matrix, offset) {
 // THIS STARTS THE MAIN GAME LOOP
 // game initialization
 let dropCounter = 0
-let dropInterval = 500 // 0.5 seconds
+let dropInterval = 700 // 0.5 seconds
 let lastTime = 0
 
 // main game loop function
@@ -321,6 +363,7 @@ function update(time = 0) {
     dropCounter  += deltaTime
     if (dropCounter > dropInterval) {
         playerDrop()
+        updateScore()
         dropCounter = 0
     } 
     draw()
@@ -329,4 +372,5 @@ function update(time = 0) {
 }
 
 // entry call to kick off the game
+playerReset()
 update()
