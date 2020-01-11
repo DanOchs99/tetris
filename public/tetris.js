@@ -1,3 +1,5 @@
+// false = standard mode; true = provide mobile ui debugging outputs
+const DEBUG_MOBILEUI = true
 //get the canvas, create a context for drawing on it
 const canvas = document.getElementById('tetris')
 const canvasNext = document.getElementById('nextPiece')
@@ -25,12 +27,24 @@ const colors = [
 const arena = createMatrix(12, 20)
 
 // this is the model for the falling piece
-// initialize with an 'I' @ (4,0)
+// gets initialized by playerReset()
 const player = {
-    pos: {x: 4, y: 0},
+    // where is the falling piece on the board
+    pos: {x: 0, y: 0},
+    // definitions of the falling piece and the next piece to drop
     matrix: null,
-    next : null,
-    score : 0
+    next: null,
+    // the player's current score
+    // TODO move this someplace else, shouldn't belong to this object
+    score: 0,
+    // name of the current falling piece and next piece to drop
+    piece: '',
+    nextpiece: '',
+    // (x,y) offset from top left corner of falling piece matrix to center (in drawing buffer px)
+    // lx = left hit box x-offset from center, lt = top left hitbox, lb = bottom left hitbox
+    // rx = right hit box x-offset from center, rt = top right hitbox, rb = bottom right hitbox
+    // drop = start of drop piece hitbox, px below the center point
+    touch_offset: {x: 0, y: 0, lx: 10, lt: 40, lb: 40, rx: 10, rt: 40, rb: 40, drop: 40}
 }
 
 // map keyboard controls 
@@ -53,17 +67,17 @@ document.addEventListener('keydown', event => {
 // event handler for clicks/taps in the canvas
 canvas.addEventListener('click', event => {
     // translate to pixel buffer coords
-    let tap_x = ((event.clientX - event.target.offsetLeft) / event.target.offsetWidth) * canvas.width
-    let tap_y = ((event.clientY - event.target.offsetTop) / event.target.offsetHeight) * canvas.height
-    let fall_x = player.pos.x * 20
-    let fall_y = player.pos.y * 20
-    if (tap_y > (fall_y + 40)) {
+    let click_x = ((event.clientX - event.target.offsetLeft) / event.target.offsetWidth) * canvas.width
+    let click_y = ((event.clientY - event.target.offsetTop) / event.target.offsetHeight) * canvas.height
+    let piece_x = (player.pos.x * 20) + player.touch_offset.x
+    let piece_y = (player.pos.y * 20) + player.touch_offset.y
+    if (click_y > (piece_y + player.touch_offset.drop)) {
         playerDrop()
     }
-    else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x > (fall_x + 10))) {
+    else if ((click_y > (piece_y - player.touch_offset.rt)) && (click_y < (piece_y + player.touch_offset.rb)) && (click_x > (piece_x + player.touch_offset.rx))) {
         playerMove(1);
     }
-    else if ((tap_y > (fall_y - 40)) && (tap_y < (fall_y + 40)) && (tap_x < (fall_x - 10))) {
+    else if ((click_y > (piece_y - player.touch_offset.lt)) && (click_y < (piece_y + player.touch_offset.lb)) && (click_x < (piece_x - player.touch_offset.lx))) {
         playerMove(-1);
     }
 })
@@ -188,16 +202,26 @@ function merge (arena, player) {
 // drops pieces - this starts a new drop
 function playerReset() {
     const pieces = 'TJLOSZI'
+    let rand_piece = ''
     if (player.next === null) {
-        player.matrix = createPiece(pieces[pieces.length * Math.random() | 0])
+        //player.matrix = createPiece(pieces[pieces.length * Math.random() | 0])
+        rand_piece = pieces[Math.floor(pieces.length * Math.random())]
+        player.matrix = createPiece(rand_piece)
+        player.piece = rand_piece
     }  else {
         player.matrix = player.next
+        player.piece = player.nextpiece
     }
-    player.next = createPiece(pieces[pieces.length * Math.random() | 0])
+    //player.next = createPiece(pieces[pieces.length * Math.random() | 0])
+    rand_piece = pieces[Math.floor(pieces.length * Math.random())]
+    player.next = createPiece(rand_piece)
+    player.nextpiece = rand_piece
     
     player.pos.y = 0
     player.pos.x = (arena[0].length / 2 | 0) -
                    (player.matrix[0].length / 2 | 0)
+    setTouchOffset()
+
     if (collide(arena, player)) {
         arena.forEach(row => row.fill(0))
         player.score = 0
@@ -291,14 +315,58 @@ function rotate(matrix, dir) {
     }
 }
 
+function setTouchOffset() {
+    // player.pos * 20 gives the upper left corner of the falling pice matrix
+    // set touch offset such that (player.pos*20)+touch_offset gives us the center
+    // of the falling piece matrix
+
+    // the hit box boundaries are currently always:
+    // left: 10 px to left, 40 px above, 40 px below
+    // right: 10 px to right, 40 px above, 40 px below 
+    // drop: 40 px below center point
+
+    // they could adjust by piece; for some pieces (like 'I') would be even better
+    // if adjusted by rotation state
+
+    if (player.piece == 'T') {
+        player.touch_offset.x = 30
+        player.touch_offset.y = 30
+    }
+    else if (player.piece == 'J') {
+        player.touch_offset.x = 30
+        player.touch_offset.y = 30
+    }
+    else if (player.piece == 'L') {
+        player.touch_offset.x = 30
+        player.touch_offset.y = 30
+    }
+    else if (player.piece == 'O') {
+        player.touch_offset.x = 20
+        player.touch_offset.y = 20
+    }
+    else if (player.piece == 'S') {
+        player.touch_offset.x = 30
+        player.touch_offset.y = 30
+    }
+    else if (player.piece == 'Z') {
+        player.touch_offset.x = 30
+        player.touch_offset.y = 30
+    }
+    else if (player.piece == 'I') {
+        player.touch_offset.x = 40
+        player.touch_offset.y = 40
+    }
+    else {    // this should never fire
+        player.touch_offset.x = 0
+        player.touch_offset.y = 0
+    }
+}
+
 // VIEW FUNCTIONS
 //re-draws both the game board and the next piece canvases
 function draw() {
-
-    //context.fillStyle = 'black'
-    //context.fillRect(0, 0, canvas.width, canvas.height)
+    //clear the main canvas
     context.clearRect(0, 0, canvas.width, canvas.height)
-    //context.stroke()
 
     drawMatrix(arena, {x: 0, y: 0})
     drawMatrix(player.matrix, player.pos)
@@ -320,7 +388,7 @@ function drawMatrixNext(matrix, offset) {
                 // draw the colored block
                 contextNext.fillStyle = colors[value]
                 contextNext.fillRect(x1, y1, block_size, block_size)
-                // draw a grey border
+                // draw a black border
                 contextNext.lineWidth = 2
                 contextNext.strokeStyle = '#000000'
                 context.beginPath()
@@ -352,99 +420,101 @@ function drawMatrix(matrix, offset) {
             }
         })
     })
-    // touch interface debug code
-    context.lineWidth = 1
-    context.strokeStyle = 'cyan'
-    // draw an 'x' @ player.pos
-    let line = []
-    line.push((player.pos.x * 20) - 5)
-    line.push((player.pos.y * 20) - 5)
-    line.push((player.pos.x * 20) + 5)
-    line.push((player.pos.y * 20) + 5)
-    clipToArena(line)
-    context.beginPath()
-    context.moveTo(line[0],line[1])
-    context.lineTo(line[2],line[3])
-    context.stroke()
-    line = []
-    line.push((player.pos.x * 20) + 5)
-    line.push((player.pos.y * 20) - 5)
-    line.push((player.pos.x * 20) - 5)
-    line.push((player.pos.y * 20) + 5)
-    clipToArena(line)
-    context.beginPath()
-    context.moveTo(line[0], line[1])
-    context.lineTo(line[2], line[3])
-    context.stroke()
+    if (DEBUG_MOBILEUI) {
+        context.lineWidth = 1
+        context.strokeStyle = 'cyan'
+        // draw an 'x' @ player.pos
+        let line = []
+        line.push(((player.pos.x * 20) + player.touch_offset.x) - 5)
+        line.push(((player.pos.y * 20) + player.touch_offset.y) - 5)
+        line.push(((player.pos.x * 20) + player.touch_offset.x) + 5)
+        line.push(((player.pos.y * 20) + player.touch_offset.y) + 5)
+        clipToArena(line)
+        context.beginPath()
+        context.moveTo(line[0],line[1])
+        context.lineTo(line[2],line[3])
+        context.stroke()
+        line = []
+        line.push(((player.pos.x * 20) + player.touch_offset.x) + 5)
+        line.push(((player.pos.y * 20) + player.touch_offset.y) - 5)
+        line.push(((player.pos.x * 20) + player.touch_offset.x) - 5)
+        line.push(((player.pos.y * 20) + player.touch_offset.y) + 5)
+        clipToArena(line)
+        context.beginPath()
+        context.moveTo(line[0], line[1])
+        context.lineTo(line[2], line[3])
+        context.stroke()
 
-    // drop hit box
-    line = []
-    line.push(0)
-    if (((player.pos.y * 20) + 40) > 400) {
-        line.push(400) 
-    }
-    else {
-        line.push((player.pos.y * 20) + 40)
-    }
-    line.push(canvas.width)
-    line.push(canvas.height - line[1])
-    context.beginPath()
-    context.rect(line[0], line[1], line[2], line[3])
-    context.stroke()
-
-    context.strokeStyle = 'yellow'
-    // left hit box
-    line = []
-    line.push(0)
-    if (((player.pos.y * 20) - 40) < 0) {
-        line.push(0) 
-    }
-    else {
-        line.push((player.pos.y * 20) - 40)
-    }
-    if (((player.pos.x * 20) - 10) < 0) {
+        // drop hit box
+        line = []
         line.push(0)
-    }
-    else {
-        line.push((player.pos.x * 20) - 10)
-    }
-    if (((player.pos.y * 20) + 40) > canvas.height) {
-        line.push(canvas.height - line[1])
-    }
-    else {
-        line.push(((player.pos.y * 20) + 40) - line[1])
-    }
-    context.beginPath()
-    context.rect(line[0], line[1], line[2], line[3])
-    context.stroke()
-    // right hit box
-    line = []
-    if (((player.pos.x * 20) + 10) > canvas.width) {
+        if (((player.pos.y * 20) + player.touch_offset.x + player.touch_offset.drop) > 400) {
+            line.push(400) 
+        }
+        else {
+            line.push((player.pos.y * 20) + player.touch_offset.x + player.touch_offset.drop)
+        }
         line.push(canvas.width)
-    }
-    else {
-        line.push((player.pos.x * 20) + 10)
-    }
-    if (((player.pos.y * 20) - 40) < 0) {
-        line.push(0) 
-    }
-    else {
-        line.push((player.pos.y * 20) - 40)
-    }
-    line.push(canvas.width-line[0])
-    if (((player.pos.y * 20) + 40) > canvas.height) {
         line.push(canvas.height - line[1])
+        context.beginPath()
+        context.rect(line[0], line[1], line[2], line[3])
+        context.stroke()
+
+        context.strokeStyle = 'yellow'
+        // left hit box
+        line = []
+        line.push(0)
+        if (((player.pos.y * 20) + player.touch_offset.y - player.touch_offset.lt) < 0) {
+            line.push(0) 
+        }
+        else {
+            line.push((player.pos.y * 20) + player.touch_offset.y - player.touch_offset.lt)
+        }
+        if (((player.pos.x * 20) + player.touch_offset.x - player.touch_offset.lx) < 0) {
+            line.push(0)
+        }
+        else {
+            line.push((player.pos.x * 20) + player.touch_offset.x - player.touch_offset.lx)
+        }
+        if (((player.pos.y * 20) + player.touch_offset.y + player.touch_offset.lb) > canvas.height) {
+            line.push(canvas.height - line[1])
+        }
+        else {
+            line.push(((player.pos.y * 20) + player.touch_offset.y + player.touch_offset.lb) - line[1])
+        }
+        context.beginPath()
+        context.rect(line[0], line[1], line[2], line[3])
+        context.stroke()
+
+        // right hit box
+        line = []
+        if (((player.pos.x * 20) + player.touch_offset.x + player.touch_offset.rx) > canvas.width) {
+            line.push(canvas.width)
+        }
+        else {
+            line.push((player.pos.x * 20) + player.touch_offset.x + player.touch_offset.rx)
+        }
+        if (((player.pos.y * 20) + player.touch_offset.y - player.touch_offset.rt) < 0) {
+            line.push(0) 
+        }
+        else {
+            line.push((player.pos.y * 20) + player.touch_offset.y - player.touch_offset.rt)
+        }
+        line.push(canvas.width-line[0])
+        if (((player.pos.y * 20) + player.touch_offset.y + player.touch_offset.rb) > canvas.height) {
+            line.push(canvas.height - line[1])
+        }
+        else {
+            line.push(((player.pos.y * 20) + player.touch_offset.y + player.touch_offset.rb) - line[1])
+        }
+        context.beginPath()
+        context.rect(line[0], line[1], line[2], line[3])
+        context.stroke()
     }
-    else {
-        line.push(((player.pos.y * 20) + 40) - line[1])
-    }
-    context.beginPath()
-    context.rect(line[0], line[1], line[2], line[3])
-    context.stroke()
-    // end touch interface debug code
 }
 
 // take an array [x1,y1,x2,y2] representing a line to draw and shift to the edges of the game board
+// TODO - make this a proper clip instead of shifting endpoint
 function clipToArena(line) {
     if (line[0] < 0) {
         line[0] = 0
@@ -475,11 +545,10 @@ let dropInterval = 700 // 0.5 seconds
 let lastTime = 0
 let refreshView = true
 
-// variables for performance monitor code
-let frame_count = 0
-let refresh_count = 0
-// end variables for performance monitor code
-
+if (DEBUG_MOBILEUI) {
+    var frame_count = 0
+    var refresh_count = 0
+}
 
 // main game loop function
 function update(time = 0) {
@@ -493,27 +562,29 @@ function update(time = 0) {
         dropCounter = 0    // reset the drop timer for the next piece; NOT NEEDED already done in playerDrop() 
     }
 
-    // performance monitor code
-    //console.log(`t: ${time}  lt: ${lastTime} dt: ${deltaTime}`)
-    let curr_sec = Math.floor(time / 1000)
-    let last_sec = Math.floor(lastTime / 1000)
-    if (curr_sec == last_sec) {
-        frame_count += 1
-        if (refreshView) {
-            refresh_count += 1
-        }
-    } else {
-        console.log(`Time: ${last_sec}   Frame counter: ${frame_count}   Refresh counter: ${refresh_count}`)
-        frame_count = 1
-        if (refreshView) {
-            refresh_count = 1
-        }
+    if (DEBUG_MOBILEUI) {
+        //console.log(`t: ${time}  lt: ${lastTime} dt: ${deltaTime}`)
+        let curr_sec = Math.floor(time / 1000)
+        let last_sec = Math.floor(lastTime / 1000)
+        if (curr_sec == last_sec) {
+            frame_count += 1
+            if (refreshView) {
+                refresh_count += 1
+            }
+        } 
         else {
-            refresh_count = 0
+            console.log(`Time: ${last_sec}   Frame counter: ${frame_count}   Refresh counter: ${refresh_count}`)
+            frame_count = 1
+            if (refreshView) {
+                refresh_count = 1
+            }
+            else {
+                refresh_count = 0
+            }
         }
     }
-    // end performance monitor code
 
+    // redraw the view if the model has changed
     if (refreshView) {
         draw()
         refreshView = false
@@ -525,6 +596,6 @@ function update(time = 0) {
     return deltaTime
 }
 
-// entry call to kick off the game
+// entry calls to kick off the game
 playerReset()
 update()
