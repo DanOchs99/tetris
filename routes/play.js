@@ -4,7 +4,6 @@ const router = express.Router();
 const db = require("../db")
 
 router.get("/", (req, res) => {
-  //update with correct view file
   res.render("game");
 });
 
@@ -18,8 +17,8 @@ router.post("/submitScore", (req, res) => {
       if (score.high_score < userScore) {
         // update the score, high score, high score date for this game
         db.none(
-          "UPDATE scores SET current_score = $1, high_score = $2 WHERE user_id = $3;",
-          [userScore, userScore, userId]
+          "UPDATE scores SET current_score = $1, high_score = $2, high_score_date = $3 WHERE user_id = $4;",
+          [userScore, userScore, new Date(), userId]
         )
           .then(() => {
             res.redirect("/leaderboard");

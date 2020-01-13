@@ -21,8 +21,4 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/addtoboard", (req, res) => {
-  //post route for adding score of completed game to leaderboard table
-});
-
 module.exports = router;
