@@ -8,11 +8,12 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 
 const pgp = require("pg-promise")();
 pgp.pg.defaults.ssl = true;
+const db = pgp(DATABASE_URL);
+
 const app = express();
 const mustacheExpress = require("mustache-express");
 const session = require("express-session");
 const path = require("path");
-const db = pgp(DATABASE_URL);
 
 app.use(express.urlencoded({ extended: false }));
 
@@ -72,10 +73,13 @@ app.post("/register", (req, res) => {
         else {
         // hash the password provided
             bcrypt.hash(password, SALT_ROUNDS).then(hash => {
-                db.none("INSERT INTO users(username, password) VALUES($1, $2);", [
+                db.one("INSERT INTO users(username, password) VALUES($1, $2) RETURNING user_id;", [
                     username,
                     hash])
-                .then(() => {
+                .then((user) => {
+                  // console.log(`New user #${user.user_id} was created`)
+                  db.none("INSERT INTO scores(user_id, current_score, high_score) VALUES($1, $2, $3);", [
+                    user.user_id, 0, 0])
                   res.render("landing", {message: "New user created - please sign in" });
                 })
                 .catch((error) => {console.log(error)
