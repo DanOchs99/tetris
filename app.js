@@ -57,7 +57,6 @@ const bcrypt = require("bcrypt");
 const SALT_ROUNDS = 10;
 
 app.post("/register", (req, res) => {
-  console.log(req.body);
   let username = req.body.username;
   let password = req.body.password;
 
@@ -72,7 +71,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.render("landing");
+  res.render("landing", {message: ""});
 });
 
 app.get("/registration", (req, res) => {
@@ -90,7 +89,6 @@ app.post("/login", (req, res) => {
   db.oneOrNone(`SELECT user_id, username, password FROM users WHERE username = $1`, [
     username
   ]).then(userLoggingIn => {
-    console.log(userLoggingIn);
     if (userLoggingIn) {
       bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
         if (passwordsMatch) {
@@ -98,23 +96,19 @@ app.post("/login", (req, res) => {
           req.session.isAuthenticated = true;
           res.redirect("/play");
         } else {
-          res.render("login", {
+          res.render("landing", {
             message:
               "Credentials invalid, please enter a valid username and password"
           });
         }
       });
     } else {
-      res.render("register", {
+      res.render("landing", {
         message:
           "Credentials invalid, please enter a valid username and password"
       });
     }
   });
-});
-
-app.get("/leaderboard", (req, res) => {
-  res.render("leaderboard");
 });
 
 app.listen(PORT, () => {
