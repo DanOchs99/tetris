@@ -63,11 +63,11 @@ app.post("/register", (req, res) => {
 
     db.any('SELECT user_id, username, password FROM users')
     .then((results) => {
-        // verify that the username exists
+        // verify that the username does not exist
         let checkName =  results.filter(item => item.name==req.body.username)
-        if (checkName.length != 1) {
+        if (checkName.length != 0) {
             req.session.destroy()
-            res.redirect('/')
+            res.render("landing", {message: "Please choose a different user name." });
         }
         else {
         // hash the password provided
