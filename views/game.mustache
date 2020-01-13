@@ -7,8 +7,12 @@
 
 <body>
   <!-- 240px x 400px is the drawing buffer -->
-      <h4>score</h4>
-      <div id="score">0</div>
+    <h4>score</h4>
+    <form id="scoreForm" style="display:none" method="POST" action="play/submitScore">
+      <input id="score" type="hidden" name="recordScore" />
+      <button id="submitScore" type="submit" value="send"></button>
+    </form>
+    <div id="showScore">0</div>
     <canvas id="tetris" width="240" height="400"></canvas>
     <canvas id="nextPiece" width="100" height="100"></canvas>
 

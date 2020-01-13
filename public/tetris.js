@@ -160,8 +160,16 @@ function arenaSweep() {
     }
 }
 
+function submitScore() {
+    document.getElementById("scoreForm").submit();
+}
+
 function updateScore() {
-    document.getElementById('score').innerHTML = player.score
+    document.getElementById('showScore').innerHTML = player.score
+}
+
+function postScore() {
+    document.getElementById('score').value = player.score
 }
 
 function createMatrix(w, h) {
@@ -223,8 +231,10 @@ function playerReset() {
     setTouchOffset()
 
     if (collide(arena, player)) {
-        arena.forEach(row => row.fill(0))
-        player.score = 0
+        postScore()
+        submitScore()
+        // arena.forEach(row => row.fill(0))
+        // player.score = 0
     }
     refreshView = true
 }
