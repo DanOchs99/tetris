@@ -15,13 +15,13 @@ router.get("/", (req, res) => {
 router.post("/submitScore", (req, res) => {
   const userScore = req.body.recordScore
   const userId = req.session.userId
-  db.none('UPDATE users SET score = $1 WHERE user_id = $2', [userScore, userId])
+  db.none('UPDATE scores SET current_score = $1 WHERE user_id = $2', [userScore, userId])
       .then(() => {
           res.redirect('/leaderboard')
        })
        .catch((error) => {
            console.log(error)
-           res.redirect('/')
+           res.render("landing", {message: "An error occurred" })
        })
 })
 
