@@ -26,15 +26,15 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-function authenticate(req,res,next) {
-  if(req.session) {
-      if(req.session.isAuthenticated) {
-          next()
-      } else {
-          res.redirect('/')
-      }
+function authenticate(req, res, next) {
+  if (req.session) {
+    if (req.session.isAuthenticated) {
+      next();
+    } else {
+      res.redirect("/");
+    }
   } else {
-      res.redirect('/')
+    res.redirect("/");
   }
 }
 
@@ -87,14 +87,15 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  db.oneOrNone(`SELECT user_id, username, password FROM users WHERE username = $1`, [
-    username
-  ]).then(userLoggingIn => {
+  db.oneOrNone(
+    `SELECT user_id, username, password FROM users WHERE username = $1`,
+    [username]
+  ).then(userLoggingIn => {
     console.log(userLoggingIn);
     if (userLoggingIn) {
       bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
         if (passwordsMatch) {
-          req.session.userId = userLoggingIn.user_id
+          req.session.userId = userLoggingIn.user_id;
           req.session.isAuthenticated = true;
           res.redirect("/play");
         } else {

@@ -14,6 +14,7 @@
 
 <body>
 
+
 	<div class="limiter">
 		<div class="container-table100">
 			<div class="wrap-table100">
@@ -28,13 +29,15 @@
 							</tr>
 						</thead>
 						<tbody>
+						{{#scores}}
 							<tr>
 								<td class="column1">1</td>
-								<td class="column2">Johnny</td>
-								<td class="column3">123456</td>
+								<td class="column2">{{username}}</td>
+								<td class="column3">{{score}}</td>
 								<td class="column4">Today</td>
 
 							</tr>
+							{{/scores}}
 
 
 						</tbody>
