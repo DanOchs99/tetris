@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get("/play", (req, res) => {
   //update with correct view file
-  res.render("mustachefile");
+  res.render("game");
 });
 
 module.exports = router;

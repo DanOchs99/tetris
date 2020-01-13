@@ -15,6 +15,7 @@ const path = require("path");
 const db = pgp(DATABASE_URL);
 
 app.use(express.urlencoded({ extended: false }));
+
 app.use(
   session({
     secret: SESSION_SECRET,
@@ -25,13 +26,24 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-function authenticate() {}
+function authenticate(req,res,next) {
+  if(req.session) {
+      if(req.session.isAuthenticated) {
+          next()
+      } else {
+          res.redirect('/')
+      }
+  } else {
+      res.redirect('/')
+  }
+}
+
 //routers
 const leaderboardRouter = require("./routes/leaderboard");
-app.use("/leaderboard", leaderboardRouter);
+app.use("/leaderboard", authenticate, leaderboardRouter);
 
 const playRouter = require("./routes/play");
-app.use("/play", playRouter);
+app.use("/play", authenticate, playRouter);
 
 app.use(express.static("public"));
 
@@ -60,7 +72,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.render("game");
+  res.render("landing");
 });
 
 app.get("/registration", (req, res) => {
@@ -84,7 +96,7 @@ app.post("/login", (req, res) => {
       bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
         if (passwordsMatch) {
           req.session.isAuthenticated = true;
-          res.redirect("/leaderboard");
+          res.redirect("/play");
         } else {
           res.render("login", {
             message:
