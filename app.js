@@ -3,17 +3,14 @@ const express = require("express");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 8080;
-const DATABASE_URL = process.env.DATABASE_URL;
 const SESSION_SECRET = process.env.SESSION_SECRET;
-
-const pgp = require("pg-promise")();
-pgp.pg.defaults.ssl = true;
-const db = pgp(DATABASE_URL);
 
 const app = express();
 const mustacheExpress = require("mustache-express");
 const session = require("express-session");
 const path = require("path");
+
+const db = require("./db")
 
 app.use(express.urlencoded({ extended: false }));
 
