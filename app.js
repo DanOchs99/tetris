@@ -56,18 +56,31 @@ app.set("view engine", "mustache");
 const bcrypt = require("bcrypt");
 const SALT_ROUNDS = 10;
 
+// TODO - add catch blocks in this function
 app.post("/register", (req, res) => {
-  let username = req.body.username;
-  let password = req.body.password;
+    let username = req.body.username;
+    let password = req.body.password;
 
-  bcrypt.hash(password, SALT_ROUNDS).then(hash => {
-    db.none("INSERT INTO users(username, password) VALUES($1, $2);", [
-      username,
-      hash
-    ]).then(() => {
-      res.redirect("/login");
+    db.any('SELECT user_id, username, password FROM users')
+    .then((results) => {
+        // verify that the username exists
+        let checkName =  results.filter(item => item.name==req.body.username)
+        if (checkName.length != 1) {
+            req.session.destroy()
+            res.redirect('/')
+        }
+        else {
+        // check the password provided
+            bcrypt.hash(password, SALT_ROUNDS).then(hash => {
+                db.none("INSERT INTO users(username, password) VALUES($1, $2);", [
+                    username,
+                    hash])
+                .then(() => {
+                    res.redirect("/login");
+                });
+            });
+        }
     });
-  });
 });
 
 app.get("/", (req, res) => {
@@ -82,6 +95,7 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+// TODO - add catch block in this function
 app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
