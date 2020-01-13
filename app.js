@@ -70,14 +70,17 @@ app.post("/register", (req, res) => {
             res.redirect('/')
         }
         else {
-        // check the password provided
+        // hash the password provided
             bcrypt.hash(password, SALT_ROUNDS).then(hash => {
                 db.none("INSERT INTO users(username, password) VALUES($1, $2);", [
                     username,
                     hash])
                 .then(() => {
-                    res.redirect("/login");
-                });
+                  res.render("landing", {message: "New user created - please sign in" });
+                })
+                .catch((error) => {console.log(error)
+                  res.render("landing", {message: "An error occurred" })
+                 });
             });
         }
     });
@@ -100,29 +103,31 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  db.oneOrNone(`SELECT user_id, username, password FROM users WHERE username = $1`, [
-    username
-  ]).then(userLoggingIn => {
-    if (userLoggingIn) {
-      bcrypt.compare(password, userLoggingIn.password).then(passwordsMatch => {
-        if (passwordsMatch) {
-          req.session.userId = userLoggingIn.user_id
-          req.session.isAuthenticated = true;
-          res.redirect("/play");
-        } else {
-          res.render("landing", {
-            message:
-              "Credentials invalid, please enter a valid username and password"
-          });
-        }
-      });
-    } else {
-      res.render("landing", {
-        message:
-          "Credentials invalid, please enter a valid username and password"
-      });
-    }
-  });
+  db.oneOrNone(`SELECT user_id, username, password FROM users WHERE username = $1`, [username])
+  .then(userLoggingIn => {
+      if (userLoggingIn) {
+          bcrypt.compare(password, userLoggingIn.password)
+          .then(passwordsMatch => {
+              if (passwordsMatch) {
+                  req.session.userId = userLoggingIn.user_id
+                  req.session.isAuthenticated = true;
+                  res.redirect("/play");
+              } 
+              else {
+                  res.render("landing", { message: "Credentials invalid, please enter a valid username and password"});
+              }
+          })
+          .catch((error) => {console.log(error)
+            res.render("landing", {message: "An error occurred" })
+           });
+      }
+      else {
+          res.render("landing", {message: "Credentials invalid, please enter a valid username and password"});
+      }
+  })
+  .catch((error) => {console.log(error)
+                     res.render("landing", {message: "An error occurred" })
+                    });
 });
 
 app.listen(PORT, () => {
