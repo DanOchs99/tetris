@@ -11,7 +11,16 @@ router.get("/", (req, res) => {
     "SELECT username, score FROM users ORDER BY score DESC LIMIT 10;"
   ).then(results => {
     console.log(results);
-    res.render("leaderboard", { scores: results });
+    results = results.map((r, index) => {
+      return {
+        ...r,
+        rankId: ++index
+      };
+    });
+    console.log(results);
+    res.render("leaderboard", {
+      scores: results
+    });
   });
 });
 
@@ -19,5 +28,4 @@ router.post("/addtoboard", (req, res) => {
   //post route for adding score of completed game to leaderboard table
 });
 
-function displayUserScore() {}
 module.exports = router;
