@@ -212,7 +212,6 @@ function playerReset() {
     const pieces = 'TJLOSZI'
     let rand_piece = ''
     if (player.next === null) {
-        //player.matrix = createPiece(pieces[pieces.length * Math.random() | 0])
         rand_piece = pieces[Math.floor(pieces.length * Math.random())]
         player.matrix = createPiece(rand_piece)
         player.piece = rand_piece
@@ -220,7 +219,6 @@ function playerReset() {
         player.matrix = player.next
         player.piece = player.nextpiece
     }
-    //player.next = createPiece(pieces[pieces.length * Math.random() | 0])
     rand_piece = pieces[Math.floor(pieces.length * Math.random())]
     player.next = createPiece(rand_piece)
     player.nextpiece = rand_piece
@@ -233,8 +231,6 @@ function playerReset() {
     if (collide(arena, player)) {
         postScore()
         submitScore()
-        // arena.forEach(row => row.fill(0))
-        // player.score = 0
     }
     refreshView = true
 }
@@ -566,7 +562,7 @@ function update(time = 0) {
     const deltaTime = time - lastTime    // calc dTime for this cycle
 
     dropCounter  += deltaTime    // increment the falling piece move timer
-    if (dropCounter > dropInterval) {    // time move the falling piece down??
+    if (dropCounter > dropInterval) {    // time to move the falling piece down??
         playerDrop()
         updateScore()    // this should prob be somewhere else...
         dropCounter = 0    // reset the drop timer for the next piece; NOT NEEDED already done in playerDrop() 
