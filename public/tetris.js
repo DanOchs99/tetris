@@ -244,7 +244,7 @@ function playerDrop() {
         playerReset()
         arenaSweep()
         updateScore()
-        // in update this line was 'dropInterval' ???
+        // in levels update this line was 'dropInterval' ???
         // dropInterval = 700
     }
     dropCounter = 0
