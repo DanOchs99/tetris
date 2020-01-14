@@ -14,15 +14,21 @@
     </form>
     <div id="showScore">0</div>
     <canvas id="tetris" width="240" height="400"></canvas>
-    <canvas id="nextPiece" width="100" height="100"></canvas>
-
-  <div class="controls">
-    <button id="rot_counterclock_button">ROT CC</button>
-    <button id="fast_drop_button">DROP</button></canvas>
-    <button id="rot_clockwise_button">ROT C</button>
-  </div>
-  <input type="hidden" id="devmode" value={{devmode}} />
-  <script src="tetris.js"></script>  
+    <div id="menu">
+      <p>lines</p>
+      <div id="lines">0</div>
+      <p>level</p>
+      <div id="level">0</div>
+      <p>next</p>
+      <canvas id="nextPiece" width="100" height="100"></canvas>
+    </div>
+    <div class="controls">
+      <button id="rot_counterclock_button">ROT CC</button>
+      <button id="fast_drop_button">DROP</button></canvas>
+      <button id="rot_clockwise_button">ROT C</button>
+    </div>
+    <input type="hidden" id="devmode" value={{devmode}} />
+    <script src="tetris.js"></script>  
 </body>
 
 </html>
