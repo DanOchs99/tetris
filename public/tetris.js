@@ -219,9 +219,7 @@ function merge (arena, player) {
 function playerReset() {
     if (!firedSubmit) {
         const pieces = 'TJLOSZI'
-        //TODO: improve this function!!
-        dropInterval = 100
-        //dropInterval = 1000 - (player.level*300)
+        dropInterval = 600 - (player.level*25)
         let rand_piece = ''
         if (player.next === null) {
             rand_piece = pieces[Math.floor(pieces.length * Math.random())]
@@ -375,7 +373,6 @@ function setTouchOffset() {
 
 // SCORE FUNCTIONS
 function submitScore() {
-    console.log(`submitScore entered @ ${lastTime}`)
     document.getElementById("scoreForm").submit();
 }
 
