@@ -42,6 +42,8 @@ const player = {
     // the player's current score
     // TODO move this someplace else, shouldn't belong to this object
     score: 0,
+    level: 0,
+    lines: 0,
     // name of the current falling piece and next piece to drop
     piece: '',
     nextpiece: '',
@@ -162,6 +164,10 @@ function arenaSweep() {
         rowCount = 2
 
         player.score +=  100
+        player.lines++
+        if (player.lines%3===0) {
+            player.level++
+        }
     }
 }
 
@@ -171,6 +177,8 @@ function submitScore() {
 
 function updateScore() {
     document.getElementById('showScore').innerHTML = player.score
+    document.getElementById('level').innerHTML = player.level
+    document.getElementById('lines').innerHTML = player.lines
 }
 
 function postScore() {
@@ -215,6 +223,7 @@ function merge (arena, player) {
 // drops pieces - this starts a new drop
 function playerReset() {
     const pieces = 'TJLOSZI'
+    dropInterval = 1000 - (player.level*300)
     let rand_piece = ''
     if (player.next === null) {
         rand_piece = pieces[Math.floor(pieces.length * Math.random())]
@@ -249,7 +258,8 @@ function playerDrop() {
         playerReset()
         arenaSweep()
         updateScore()
-        dropInterval = 700
+        // in update this line was 'dropInterval' ???
+        // dropInterval = 700
     }
     dropCounter = 0
     refreshView = true
