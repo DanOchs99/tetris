@@ -25,6 +25,9 @@ router.post("/submitScore", (req, res) => {
           })
           .catch(error => {
             console.log(error);
+            if (req.session) {
+              req.session.destroy();
+            }
             res.render("landing", {
               message: "An error occurred updating scores"
             });
@@ -40,6 +43,9 @@ router.post("/submitScore", (req, res) => {
           })
           .catch(error => {
             console.log(error);
+            if (req.session) {
+              req.session.destroy();
+            }
             res.render("landing", {
               message: "An error occurred updating scores"
             });

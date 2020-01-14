@@ -76,23 +76,35 @@ app.post("/register", (req, res) => {
                     .then(() => {res.render("landing", {message: "New user created - please sign in"}); })
                     .catch(error => {
                       console.log(error);
-                      res.render("landing", { message: "An error occurred" });
+                      if (req.session) {
+                        req.session.destroy();
+                      }
+                      res.render("landing", { message: "An error occurred..." });
                     });
                 })
                 .catch(error => {
                   console.log(error);
-                  res.render("landing", { message: "An error occurred" });
+                  if (req.session) {
+                    req.session.destroy();
+                  }
+                  res.render("landing", { message: "An error occurred..." });
                 });
             })
             .catch(error => {
               console.log(error);
-              res.render("landing", { message: "An error occurred" });
+              if (req.session) {
+                req.session.destroy();
+              }
+              res.render("landing", { message: "An error occurred..." });
             });
         }
     })
     .catch(error => {
         console.log(error);
-        res.render("landing", { message: "An error occurred" });
+        if (req.session) {
+          req.session.destroy();
+        }
+        res.render("landing", { message: "An error occurred..." });
     }); 
 });
 
@@ -142,6 +154,9 @@ app.post("/login", (req, res) => {
           })
           .catch(error => {
             console.log(error);
+            if (req.session) {
+              req.session.destroy();
+            }
             res.render("landing", { message: "An error occurred..." });
           });
       } else {
@@ -153,6 +168,9 @@ app.post("/login", (req, res) => {
     })
     .catch(error => {
       console.log(error);
+      if (req.session) {
+        req.session.destroy();
+      }
       res.render("landing", { message: "An error occurred..." });
     });
 });
