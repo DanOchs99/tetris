@@ -16,7 +16,8 @@
 
 
 	<div class="limiter">
-		<h1>Your Score: {{#userScore}}{{high_score}}{{/userScore}}</h1>
+		<h1>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h1>
+		<h1>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h1>
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100">
@@ -35,8 +36,7 @@
 								<td class="column1">{{rankId}}</td>
 								<td class="column2">{{username}}</td>
 								<td class="column3">{{high_score}}</td>
-								<td class="column4">Date</td>
-
+								<td class="column4">{{high_score_date}}</td>
 							</tr>
 							{{/scores}}
 

@@ -57,17 +57,23 @@ const player = {
 // map keyboard controls 
 document.addEventListener('keydown', event => {
     if (event.keyCode === 37) {
-        playerMove(-1);
+        if (!firedSubmit) {
+            playerMove(-1); }
     } else if (event.keyCode === 39) {
-        playerMove(1);
+        if (!firedSubmit) {
+            playerMove(1); }
     } else if (event.keyCode === 40) {
-        playerDrop();
+        if (!firedSubmit) {
+            playerDrop(); }
     } else if (event.keyCode === 81) {
-        playerRotate(-1);
+        if (!firedSubmit) {
+            playerRotate(-1); }
     } else if (event.keyCode === 87) {
-        playerRotate(1);
+        if (!firedSubmit) {
+            playerRotate(1); }
     } else if  (event.keyCode === 82) {
-        fastDrop()
+        if (!firedSubmit) {
+            fastDrop() }
     }
 });
 
@@ -91,13 +97,16 @@ canvas.addEventListener('click', event => {
 
 // event handlers for button controls below the main canvas
 rot_counterclock_button.addEventListener('click', event => {
-    playerRotate(-1);
+    if (!firedSubmit) {
+        playerRotate(-1); }
 })
 rot_clockwise_button.addEventListener('click', event => {
-    playerRotate(1);
+    if (!firedSubmit) {
+        playerRotate(1); }
 })
 fast_drop_button.addEventListener('click', event => {
-    fastDrop()
+    if (!firedSubmit) {
+        fastDrop(); }
 })
 
 // MODEL FUNCTIONS
@@ -208,33 +217,39 @@ function merge (arena, player) {
 
 // drops pieces - this starts a new drop
 function playerReset() {
-    const pieces = 'TJLOSZI'
-    //TODO: improve this function!!
-    //dropInterval = 100
-    dropInterval = 1000 - (player.level*300)
-    let rand_piece = ''
-    if (player.next === null) {
+    if (!firedSubmit) {
+        const pieces = 'TJLOSZI'
+        //TODO: improve this function!!
+        dropInterval = 100
+        //dropInterval = 1000 - (player.level*300)
+        let rand_piece = ''
+        if (player.next === null) {
+            rand_piece = pieces[Math.floor(pieces.length * Math.random())]
+            player.matrix = createPiece(rand_piece)
+            player.piece = rand_piece
+        }  else {
+            player.matrix = player.next
+            player.piece = player.nextpiece
+        }
         rand_piece = pieces[Math.floor(pieces.length * Math.random())]
-        player.matrix = createPiece(rand_piece)
-        player.piece = rand_piece
-    }  else {
-        player.matrix = player.next
-        player.piece = player.nextpiece
-    }
-    rand_piece = pieces[Math.floor(pieces.length * Math.random())]
-    player.next = createPiece(rand_piece)
-    player.nextpiece = rand_piece
+        player.next = createPiece(rand_piece)
+        player.nextpiece = rand_piece
     
-    player.pos.y = 0
-    player.pos.x = (arena[0].length / 2 | 0) -
+        player.pos.y = 0
+        player.pos.x = (arena[0].length / 2 | 0) -
                    (player.matrix[0].length / 2 | 0)
-    setTouchOffset()
+        setTouchOffset()
 
-    if (collide(arena, player)) {
-        postScore()
-        submitScore()
+        if (collide(arena, player)) {
+            postScore()
+            firedSubmit = true
+            submitScore()
+        }
+        refreshView = true
     }
-    refreshView = true
+    else {
+        dropInterval = 1000
+    }
 }
 
 // move falling piece down one row
@@ -360,6 +375,7 @@ function setTouchOffset() {
 
 // SCORE FUNCTIONS
 function submitScore() {
+    console.log(`submitScore entered @ ${lastTime}`)
     document.getElementById("scoreForm").submit();
 }
 
@@ -556,6 +572,7 @@ let dropInterval = 0 // this gets set in playerDrop
 let lastTime = 0
 let refreshView = true
 let inPlayerReset = false
+let firedSubmit = false
 
 if (DEBUG_MOBILEUI) {
     var frame_count = 0
