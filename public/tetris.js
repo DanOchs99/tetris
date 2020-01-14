@@ -208,7 +208,9 @@ function merge (arena, player) {
 
 // drops pieces - this starts a new drop
 function playerReset() {
+    inPlayerReset = true
     const pieces = 'TJLOSZI'
+    //TODO: improve this function
     dropInterval = 1000 - (player.level*300)
     let rand_piece = ''
     if (player.next === null) {
@@ -233,29 +235,40 @@ function playerReset() {
         submitScore()
     }
     refreshView = true
+    inPlayerReset = false
 }
 
 // move falling piece down one row
 function playerDrop() {
-    player.pos.y++
-    if (collide(arena, player)){
-        player.pos.y--
-        merge(arena, player)
-        playerReset()
-        arenaSweep()
-        updateScore()
-        // in levels update this line was 'dropInterval' ???
-        // dropInterval = 700
+    // only perform a playerDrop() if not currently in the middle of a playerReset()
+    if (!inPlayerReset) {
+        player.pos.y++
+        if (collide(arena, player)){
+            player.pos.y--
+            merge(arena, player)
+            // original order was playerReset, arenaSweep, updateScore...
+            arenaSweep()
+            updateScore()
+            playerReset()
+            // in levels update this line was 'dropInterval' ???
+            // dropInterval = 700
+        }
+        dropCounter = 0
+        refreshView = true
     }
-    dropCounter = 0
-    refreshView = true
 }
 
+function fastDrop() {
+    dropInterval = 20;
+}
+
+/*
 function fastDrop() {
     setTimeout(fastSpeed)
     if  (collide(arena, player)){
         player.pos.y--
         merge(arena, player)
+        // original here was JUST playerReset, arenaSweep
         playerReset()
         arenaSweep()
     }
@@ -265,6 +278,7 @@ function fastDrop() {
 function fastSpeed() {
     dropInterval = 0.1
 }
+*/
 
 //move a falling piece in x-axis
 function playerMove(dir) {
@@ -563,9 +577,10 @@ function clipToArena(line) {
 // THIS STARTS THE MAIN GAME LOOP
 // game initialization
 let dropCounter = 0
-let dropInterval = 700 // 0.5 seconds
+let dropInterval = 700 // move piece down every 700 ms
 let lastTime = 0
 let refreshView = true
+let inPlayerReset = false
 
 if (DEBUG_MOBILEUI) {
     var frame_count = 0
@@ -580,8 +595,10 @@ function update(time = 0) {
     dropCounter  += deltaTime    // increment the falling piece move timer
     if (dropCounter > dropInterval) {    // time to move the falling piece down??
         playerDrop()
+        /*
         updateScore()    // this should prob be somewhere else...
         dropCounter = 0    // reset the drop timer for the next piece; NOT NEEDED already done in playerDrop() 
+        */
     }
 
     if (DEBUG_MOBILEUI) {

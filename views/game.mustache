@@ -6,13 +6,13 @@
 </head>
 
 <body>
-  <!-- 240px x 400px is the drawing buffer -->
     <h4>score</h4>
     <form id="scoreForm" style="display:none" method="POST" action="play/submitScore">
       <input id="score" type="hidden" name="recordScore" />
       <button id="submitScore" type="submit" value="send"></button>
     </form>
     <div id="showScore">0</div>
+    <!-- 240px x 400px is the drawing buffer -->
     <canvas id="tetris" width="240" height="400"></canvas>
     <div id="menu">
       <p>lines</p>
