@@ -171,20 +171,6 @@ function arenaSweep() {
     }
 }
 
-function submitScore() {
-    document.getElementById("scoreForm").submit();
-}
-
-function updateScore() {
-    document.getElementById('showScore').innerHTML = player.score
-    document.getElementById('level').innerHTML = player.level
-    document.getElementById('lines').innerHTML = player.lines
-}
-
-function postScore() {
-    document.getElementById('score').value = player.score
-}
-
 function createMatrix(w, h) {
     const matrix = []
     while (h--) {
@@ -381,6 +367,21 @@ function setTouchOffset() {
         player.touch_offset.x = 0
         player.touch_offset.y = 0
     }
+}
+
+// SCORE FUNCTIONS
+function submitScore() {
+    document.getElementById("scoreForm").submit();
+}
+
+function updateScore() {
+    document.getElementById('showScore').innerHTML = player.score
+    document.getElementById('level').innerHTML = player.level
+    document.getElementById('lines').innerHTML = player.lines
+}
+
+function postScore() {
+    document.getElementById('score').value = player.score
 }
 
 // VIEW FUNCTIONS
