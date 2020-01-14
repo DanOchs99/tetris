@@ -1,5 +1,10 @@
-// false = standard mode; true = provide mobile ui debugging outputs
-const DEBUG_MOBILEUI = false
+// false = standard mode; true = enable mobile ui debugging outputs
+const devmode_switch = document.getElementById('devmode')
+let DEBUG_MOBILEUI = false
+if (devmode_switch.value == 'true') {
+    DEBUG_MOBILEUI = true
+}
+
 //get the canvas, create a context for drawing on it
 const canvas = document.getElementById('tetris')
 const canvasNext = document.getElementById('nextPiece')

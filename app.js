@@ -111,6 +111,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
+  const devmode = req.body.devmode;
 
   db.oneOrNone(
     `SELECT user_id, username, password FROM users WHERE username = $1`,
@@ -124,6 +125,13 @@ app.post("/login", (req, res) => {
             if (passwordsMatch) {
               req.session.userId = userLoggingIn.user_id;
               req.session.isAuthenticated = true;
+              if(devmode) {
+                  req.session.devmode = true;
+              }
+              else
+              {
+                  req.session.devmode = false;
+              }
               res.redirect("/play");
             } else {
               res.render("landing", {
