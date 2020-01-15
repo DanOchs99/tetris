@@ -148,7 +148,8 @@ app.post("/login", (req, res) => {
               {
                   req.session.devmode = false;
               }
-              res.redirect("/play");
+              // TODO: change back to "/play"
+              res.redirect("/leaderboard");
             } else {
               res.render("landing", {
                 message:
@@ -184,10 +185,6 @@ io.on('connection', function (socket) {
     socket.on('chat message', function (msg) {
         io.emit('chat message', msg);
     });
-    
-    socket.on('connectUser', function () {
-      io.emit('chat message', `has connected!`)
-    })
 });
 
 http.listen(PORT, () => {
