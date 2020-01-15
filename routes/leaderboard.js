@@ -7,6 +7,8 @@ const db = require("../db")
 
 router.get("/", (req, res) => {
     let userId = req.session.userId
+    let loggedInUsername = req.session.username
+
     db.any("SELECT username, high_score, high_score_date FROM users, scores WHERE users.user_id = scores.user_id ORDER BY high_score DESC LIMIT 10;")
     .then(results => {
         //console.log(results);

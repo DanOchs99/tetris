@@ -183,6 +183,10 @@ io.on('connection', function (socket) {
     socket.on('chat message', function (msg) {
         io.emit('chat message', msg);
     });
+    
+    socket.on('connectUser', function () {
+      io.emit('chat message', `has connected!`)
+    })
 });
 
 http.listen(PORT, () => {
