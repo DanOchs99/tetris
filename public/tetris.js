@@ -421,11 +421,11 @@ function drawMatrixNext(matrix, offset) {
                 // draw the colored block
                 contextNext.fillStyle = colors[value]
                 contextNext.fillRect(x1, y1, block_size, block_size)
-                // draw a black border
-                // contextNext.lineWidth = 2
-                // contextNext.strokeStyle = '#000000'
-                // context.beginPath()
-                // contextNext.strokeRect(x1, y1, block_size, block_size)
+                // draw a white border
+                contextNext.lineWidth = 2
+                contextNext.strokeStyle = '#FFFFFF'
+                context.beginPath()
+                contextNext.strokeRect(x1, y1, block_size, block_size)
             }
         })
     })
@@ -445,11 +445,11 @@ function drawMatrix(matrix, offset) {
                 // draw the colored block
                 context.fillStyle = colors[value]
                 context.fillRect(x1, y1, block_size, block_size)
-                // draw a grey border
-                // contextNext.lineWidth = 2
-                // contextNext.strokeStyle = '#000000'
-                // context.beginPath()
-                // contextNext.strokeRect(x1, y1, block_size, block_size)
+                // draw a white border
+                context.lineWidth = 2
+                context.strokeStyle = '#FFFFFF'
+                context.beginPath()
+                context.strokeRect(x1, y1, block_size, block_size)
             }
         })
     })
