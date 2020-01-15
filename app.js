@@ -75,7 +75,7 @@ app.post("/register", (req, res) => {
             .then(hash => {
                 db.one("INSERT INTO users(username, password) VALUES($1, $2) RETURNING user_id;", [username, hash])
                 .then(user => {
-                    db.none("INSERT INTO scores(user_id, current_score, high_score) VALUES($1, $2, $3);",[user.user_id, 0, 0])
+                    db.none("INSERT INTO scores(user_id, current_score, high_score, high_score_date) VALUES($1, $2, $3, $4);",[user.user_id, 0, 0, new Date()])
                     .then(() => {res.render("landing", {message: "New user created - please sign in"}); })
                     .catch(error => {
                       console.log(error);
