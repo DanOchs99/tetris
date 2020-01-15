@@ -179,22 +179,13 @@ app.post("/login", (req, res) => {
 });
 
 // socket.io listener
-/*
 io.on('connection', function (socket) {
   socket.on('chat message', function (msg) {
     io.emit('chat message', msg)
   })
 
 })
-*/
 
 http.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// original webserver listener function
-/*
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-*/
