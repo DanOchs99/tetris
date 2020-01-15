@@ -6,8 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-
-
+    <link rel="stylesheet" type="text/css" href="chat.css">
 	<link rel="stylesheet" type="text/css" href="leaderboard.css">
 
 </head>
@@ -18,6 +17,13 @@
 	<div class="limiter">
 		<h1>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h1>
 		<h1>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h1>
+
+        <ul id="messageBox"></ul>
+		<form id="messageInput" action="">
+          <input id="message" value=""/>
+          <button id="submitButton">Send</button>
+		</form>
+
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100">
@@ -48,7 +54,8 @@
 		</div>
 	</div>
 
-
+<script src="/socket.io/socket.io.js"></script>
+<script src="/chat.js"></script>
 
 </body>
 

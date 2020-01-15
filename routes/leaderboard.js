@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const http = require('http').createServer(router)
+const io = require('socket.io').listen(http)
 
 const db = require("../db")
 
@@ -34,4 +36,10 @@ router.get("/", (req, res) => {
     });
 });
 
+io.on('connection', function (socket) {
+    socket.on('chat message', function (msg) {
+        io.emit('chat message', msg)
+    })
+})
+  
 module.exports = router;
