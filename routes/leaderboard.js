@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
     let userId = req.session.userId
     let loggedInUsername = req.session.username
 
-    db.any("SELECT username, high_score, high_score_date FROM users, scores WHERE users.user_id = scores.user_id ORDER BY high_score DESC LIMIT 10;")
+    db.any("SELECT username, high_score, high_level, high_score_date FROM users, scores WHERE users.user_id = scores.user_id ORDER BY high_score DESC LIMIT 10;")
     .then(results => {
         //console.log(results);
         const newResults = results.map((r, index) => {
@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
             if (r.high_score_date) {
                 hs_date = r.high_score_date.toLocaleDateString("en-US");
             }
-            return {username: r.username, high_score: r.high_score, high_score_date: hs_date, rankId: ++index};
+            return {username: r.username, high_score: r.high_score, high_level: r.high_level, high_score_date: hs_date, rankId: ++index};
         });
         //console.log(newResults);
         db.one('SELECT current_score, high_score FROM scores WHERE user_id = $1;', [userId])
