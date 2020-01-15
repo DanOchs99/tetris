@@ -10,24 +10,20 @@ router.get("/", (req, res) => {
     let loggedInUsername = req.session.username
 
     db.any("SELECT username, high_score, high_score_date FROM users, scores WHERE users.user_id = scores.user_id ORDER BY high_score DESC LIMIT 10;")
-        .then(results => {
-            // console.log(results);
-            const newResults = results.map((r, index) => {
-                return { username: r.username, high_score: r.high_score, high_score_date: r.high_score_date, rankId: ++index };
-            });
-            // console.log(newResults);
-            db.one('SELECT current_score, high_score FROM scores WHERE user_id = $1;', [userId])
-                .then(finalResult => {
-                    //console.log(finalResult)
-                    res.render("leaderboard", { userScore: finalResult, scores: newResults, username: req.session.username })
-                })
-                .catch((error) => {
-                    console.log(error);
-                    if (req.session) {
-                        req.session.destroy();
-                    }
-                    res.render("landing", { message: "An error occurred..." })
-                });
+    .then(results => {
+        //console.log(results);
+        const newResults = results.map((r, index) => {
+            let hs_date = null;
+            if (r.high_score_date) {
+                hs_date = r.high_score_date.toLocaleDateString("en-US");
+            }
+            return {username: r.username, high_score: r.high_score, high_score_date: hs_date, rankId: ++index};
+        });
+        //console.log(newResults);
+        db.one('SELECT current_score, high_score FROM scores WHERE user_id = $1;', [userId])
+        .then(finalResult => {
+            //console.log(finalResult)
+            res.render("leaderboard", {userScore: finalResult, scores: newResults})
         })
         .catch((error) => {
             console.log(error);
