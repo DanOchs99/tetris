@@ -463,20 +463,24 @@ function drawMatrix(matrix, offset) {
         line.push(((player.pos.x * 20) + player.touch_offset.x) + 5)
         line.push(((player.pos.y * 20) + player.touch_offset.y) + 5)
         clipToArena(line)
-        context.beginPath()
-        context.moveTo(line[0],line[1])
-        context.lineTo(line[2],line[3])
-        context.stroke()
+        if (line) {
+            context.beginPath()
+            context.moveTo(line[0],line[1])
+            context.lineTo(line[2],line[3])
+            context.stroke()
+        }
         line = []
         line.push(((player.pos.x * 20) + player.touch_offset.x) + 5)
         line.push(((player.pos.y * 20) + player.touch_offset.y) - 5)
         line.push(((player.pos.x * 20) + player.touch_offset.x) - 5)
         line.push(((player.pos.y * 20) + player.touch_offset.y) + 5)
         clipToArena(line)
-        context.beginPath()
-        context.moveTo(line[0], line[1])
-        context.lineTo(line[2], line[3])
-        context.stroke()
+        if (line) {
+            context.beginPath()
+            context.moveTo(line[0], line[1])
+            context.lineTo(line[2], line[3])
+            context.stroke()
+        }
 
         // drop hit box
         line = []
@@ -546,28 +550,49 @@ function drawMatrix(matrix, offset) {
     }
 }
 
-// take an array [x1,y1,x2,y2] representing a line to draw and shift to the edges of the game board
-// TODO - make this a proper clip instead of shifting endpoint
+// take an array [x1,y1,x2,y2] representing a line to draw and clip to the edges of the game board
+// if line is completely off the board set line to null
 function clipToArena(line) {
+    // if line is in bounds return immediately
+    if (line[0]>=0 && line[0]<=canvas.width && line[1]>=0 && line[1]<=canvas.height &&
+        line[2]>=0 && line[2]<=canvas.width && line[3]>=0 && line[3]<=canvas.height) {
+            return
+    }
+    // if both endpoints are off the board; set line to null then return
+    if ((line[0]<0 || line[0]>canvas.width) && (line[1]<0 || line[1]>canvas.height) &&
+        (line[2]<0 || line[2]>canvas.width) && (line[3]<0 || line[3]>canvas.height)) {
+            line = null
+            return
+    }
+    // clip the line to edge of the canvas
+    let z = (line[3]-line[1])/(line[2]-line[0])
     if (line[0] < 0) {
+        line[1] = (z*(0-line[0]))+line[1]
         line[0] = 0
     } else if (line[0] > canvas.width) {
+        line[1] = (z*(canvas.width-line[0]))+line[1]
         line[0] = canvas.width    
     }
     if (line[1] < 0) {
+        line[0] = ((0-line[1])/z)+line[0]
         line[1] = 0
     } else if (line[1] > canvas.height) {
+        line[0] = ((canvas.height-line[1])/z)+line[0]
         line[1] = canvas.height    
     }
     if (line[2] < 0) {
+        line[3] = (z*(0-line[2]))+line[3]
         line[2] = 0
     } else if (line[2] > canvas.width) {
-        line[2] = canvas.width    
+        line[3] = (z*(canvas.width-line[2]))+line[3]
+        line[2] = canvas.width
     }
     if (line[3] < 0) {
+        line[2] = ((0-line[3])/z)+line[2]
         line[3] = 0
     } else if (line[3] > canvas.height) {
-        line[3] = canvas.height    
+        line[2] = ((canvas.height-line[3])/z)+line[2]
+        line[3] = canvas.height
     }
 }
 
