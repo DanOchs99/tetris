@@ -58,57 +58,57 @@ const bcrypt = require("bcrypt");
 const SALT_ROUNDS = 10;
 
 app.post("/register", (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
+  let username = req.body.username;
+  let password = req.body.password;
 
-    db.any("SELECT user_id, username, password FROM users")
+  db.any("SELECT user_id, username, password FROM users")
     .then(results => {
-        // verify that the username does not exist
-        let checkName = results.filter(item => item.name == req.body.username);
-        if (checkName.length != 0) {
-            req.session.destroy();
-            res.render("landing", {message: "Please choose a different user name."});
-        } 
-        else {
-            // hash the password provided
-            bcrypt.hash(password, SALT_ROUNDS)
-            .then(hash => {
-                db.one("INSERT INTO users(username, password) VALUES($1, $2) RETURNING user_id;", [username, hash])
-                .then(user => {
-                    db.none("INSERT INTO scores(user_id, current_score, high_score) VALUES($1, $2, $3);",[user.user_id, 0, 0])
-                    .then(() => {res.render("landing", {message: "New user created - please sign in"}); })
-                    .catch(error => {
-                      console.log(error);
-                      if (req.session) {
-                        req.session.destroy();
-                      }
-                      res.render("landing", { message: "An error occurred..." });
-                    });
-                })
-                .catch(error => {
-                  console.log(error);
-                  if (req.session) {
-                    req.session.destroy();
-                  }
-                  res.render("landing", { message: "An error occurred..." });
-                });
-            })
-            .catch(error => {
-              console.log(error);
-              if (req.session) {
-                req.session.destroy();
-              }
-              res.render("landing", { message: "An error occurred..." });
-            });
-        }
+      // verify that the username does not exist
+      let checkName = results.filter(item => item.name == req.body.username);
+      if (checkName.length != 0) {
+        req.session.destroy();
+        res.render("landing", { message: "Please choose a different user name." });
+      }
+      else {
+        // hash the password provided
+        bcrypt.hash(password, SALT_ROUNDS)
+          .then(hash => {
+            db.one("INSERT INTO users(username, password) VALUES($1, $2) RETURNING user_id;", [username, hash])
+              .then(user => {
+                db.none("INSERT INTO scores(user_id, current_score, high_score) VALUES($1, $2, $3);", [user.user_id, 0, 0])
+                  .then(() => { res.render("landing", { message: "New user created - please sign in" }); })
+                  .catch(error => {
+                    console.log(error);
+                    if (req.session) {
+                      req.session.destroy();
+                    }
+                    res.render("landing", { message: "An error occurred..." });
+                  });
+              })
+              .catch(error => {
+                console.log(error);
+                if (req.session) {
+                  req.session.destroy();
+                }
+                res.render("landing", { message: "An error occurred..." });
+              });
+          })
+          .catch(error => {
+            console.log(error);
+            if (req.session) {
+              req.session.destroy();
+            }
+            res.render("landing", { message: "An error occurred..." });
+          });
+      }
     })
     .catch(error => {
-        console.log(error);
-        if (req.session) {
-          req.session.destroy();
-        }
-        res.render("landing", { message: "An error occurred..." });
-    }); 
+      console.log(error);
+      if (req.session) {
+        req.session.destroy();
+      }
+      res.render("landing", { message: "An error occurred..." });
+    });
 });
 
 app.get("/", (req, res) => {
@@ -139,13 +139,14 @@ app.post("/login", (req, res) => {
           .then(passwordsMatch => {
             if (passwordsMatch) {
               req.session.userId = userLoggingIn.user_id;
+              req.session.username = userLoggingIn.username
+              console.log(req.session.username)
               req.session.isAuthenticated = true;
-              if(devmode) {
-                  req.session.devmode = true;
+              if (devmode) {
+                req.session.devmode = true;
               }
-              else
-              {
-                  req.session.devmode = false;
+              else {
+                req.session.devmode = false;
               }
               res.redirect("/play");
             } else {
