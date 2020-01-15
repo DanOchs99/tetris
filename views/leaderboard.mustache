@@ -5,15 +5,11 @@
 	<title>Leaderboard</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-    
 	<link rel="stylesheet" type="text/css" href="leaderboard.css">
 
 </head>
 
 <body>
-
-
 	<div class="limiter">
 		<h1>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h1>
 		<h1>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h1>
@@ -27,7 +23,8 @@
 								<th class="column1">Rank</th>
 								<th class="column2">User</th>
 								<th class="column3">Score</th>
-								<th class="column4">Date</th>
+								<th class="column4">Level</th>
+								<th class="column5">Date</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -36,19 +33,16 @@
 								<td class="column1">{{rankId}}</td>
 								<td class="column2">{{username}}</td>
 								<td class="column3">{{high_score}}</td>
-								<td class="column4">{{high_score_date}}</td>
+								<td class="column4">{{high_level}}</td>
+								<td class="column5">{{high_score_date}}</td>
 							</tr>
 							{{/scores}}
-
-
 						</tbody>
 					</table>
 				</div>
 			</div>
 			<div class="wrap-chat">
-				
 				<input id="displayUsername" type="hidden" value="{{username}}" /> 
-				
 				<ul id="messageBox"></ul>
 				<form id="messageInput" action="">
           			<input id="message" value=""/>

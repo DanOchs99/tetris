@@ -9,16 +9,17 @@ router.get("/", (req, res) => {
 
 router.post("/submitScore", (req, res) => {
   const userScore = req.body.recordScore;
+  const userLevel = req.body.recordLevel;
   const userId = req.session.userId;
 
   // get high score for this user
   db.one("SELECT high_score FROM scores WHERE user_id = $1;", [userId]).then(
     score => {
       if (score.high_score < userScore) {
-        // update the score, high score, high score date for this game
+        // update the score, high score, high level, high score date for this game
         db.none(
-          "UPDATE scores SET current_score = $1, high_score = $2, high_score_date = $3 WHERE user_id = $4;",
-          [userScore, userScore, new Date(), userId]
+          "UPDATE scores SET current_score = $1, high_score = $2, high_score_date = $3, high_level = $4 WHERE user_id = $5;",
+          [userScore, userScore, new Date(), userLevel, userId]
         )
           .then(() => {
             res.redirect("/leaderboard");

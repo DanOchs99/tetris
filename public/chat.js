@@ -20,4 +20,4 @@ submitButton.addEventListener("click", event => {
     event.preventDefault();
     socket.emit("chat message", message.value);
     messageInput.reset();
-}); 
+});
