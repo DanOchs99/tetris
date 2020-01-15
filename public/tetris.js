@@ -422,6 +422,10 @@ function drawMatrixNext(matrix, offset) {
                 contextNext.fillStyle = colors[value]
                 contextNext.fillRect(x1, y1, block_size, block_size)
                 // draw a black border
+                // contextNext.lineWidth = 2
+                // contextNext.strokeStyle = '#000000'
+                // context.beginPath()
+                // contextNext.strokeRect(x1, y1, block_size, block_size)
             }
         })
     })
@@ -442,6 +446,10 @@ function drawMatrix(matrix, offset) {
                 context.fillStyle = colors[value]
                 context.fillRect(x1, y1, block_size, block_size)
                 // draw a grey border
+                // contextNext.lineWidth = 2
+                // contextNext.strokeStyle = '#000000'
+                // context.beginPath()
+                // contextNext.strokeRect(x1, y1, block_size, block_size)
             }
         })
     })
