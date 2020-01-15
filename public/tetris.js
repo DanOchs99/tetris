@@ -25,7 +25,15 @@ const colors = [
     '#26AE8A',    // 4 = green = 'O'
     '#EABA18',    // 5 = yellow = 'Z'
     '#814494',    // 6 = purple = 'S'
-    '#F6F8FF'     // 7 = white = 'T'
+    '#F6F8FF',     // 7 = white = 'T'
+
+    '#D8681C',    // 8 = darker orange  = J
+    '#21426F',     // 9 = daker blue = L
+    '#AE2721',      // 10 = darker red = I
+    '#198565',      // 11 = darker green = O
+    '#BB9921',       // 12 = darker yellow = z
+    '#74348B'         // 13  = darker purple = s
+
 ]
 
 // this is the model for the static blocks
@@ -115,47 +123,48 @@ function createPiece(type) {
     if (type === 'I') {
         return [
             [0, 1, 0, 0],
+            [0, 10, 0, 0],
             [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
+            [0, 10, 0, 0],
         ]
     } else if (type === 'L') {
         return [
+            [0, 9, 0],
             [0, 2, 0],
-            [0, 2, 0],
-            [0, 2, 2],
+            [0, 9, 2],
         ]
     } else if (type === 'J') {
         return [
+            [0, 8, 0],
             [0, 3, 0],
-            [0, 3, 0],
-            [3, 3, 0],
+            [3, 8, 0],
         ]
     } else if (type === 'O') {
         return [
-            [4, 4],
-            [4, 4],
+            [4, 11],
+            [11, 4],
         ]
     } else if (type === 'Z') {
         return [
-            [5, 5, 0],
-            [0, 5, 5],
+            [12, 5, 0],
+            [0, 12, 5],
             [0, 0, 0],
         ]
     } else if (type === 'S') {
         return [
-            [0, 6, 6],
-            [6, 6, 0],
+            [0, 6, 13],
+            [13, 6, 0],
             [0, 0, 0],
         ]
     } else if (type === 'T') {
         return [
-            [0, 7, 0],
-            [7, 7, 7],
+            [0, 6, 0],
+            [6, 13, 6],
             [0, 0, 0],
         ]
     }
 }
+
 
 function arenaSweep() {
     let rowCount = 1
@@ -378,12 +387,13 @@ function submitScore() {
 
 function updateScore() {
     document.getElementById('showScore').innerHTML = player.score
-    document.getElementById('level').innerHTML = player.level
+    document.getElementById('showLevel').innerHTML = player.level
     document.getElementById('lines').innerHTML = player.lines
 }
 
 function postScore() {
     document.getElementById('score').value = player.score
+    document.getElementById('level').value = player.level
 }
 
 // VIEW FUNCTIONS
@@ -412,9 +422,9 @@ function drawMatrixNext(matrix, offset) {
                 // draw the colored block
                 contextNext.fillStyle = colors[value]
                 contextNext.fillRect(x1, y1, block_size, block_size)
-                // draw a black border
+                // draw a white border
                 contextNext.lineWidth = 2
-                contextNext.strokeStyle = '#000000'
+                contextNext.strokeStyle = '#FFFFFF'
                 context.beginPath()
                 contextNext.strokeRect(x1, y1, block_size, block_size)
             }
@@ -436,9 +446,9 @@ function drawMatrix(matrix, offset) {
                 // draw the colored block
                 context.fillStyle = colors[value]
                 context.fillRect(x1, y1, block_size, block_size)
-                // draw a grey border
+                // draw a white border
                 context.lineWidth = 2
-                context.strokeStyle = '#000000'
+                context.strokeStyle = '#FFFFFF'
                 context.beginPath()
                 context.strokeRect(x1, y1, block_size, block_size)
             }
@@ -454,20 +464,24 @@ function drawMatrix(matrix, offset) {
         line.push(((player.pos.x * 20) + player.touch_offset.x) + 5)
         line.push(((player.pos.y * 20) + player.touch_offset.y) + 5)
         clipToArena(line)
-        context.beginPath()
-        context.moveTo(line[0],line[1])
-        context.lineTo(line[2],line[3])
-        context.stroke()
+        if (line) {
+            context.beginPath()
+            context.moveTo(line[0],line[1])
+            context.lineTo(line[2],line[3])
+            context.stroke()
+        }
         line = []
         line.push(((player.pos.x * 20) + player.touch_offset.x) + 5)
         line.push(((player.pos.y * 20) + player.touch_offset.y) - 5)
         line.push(((player.pos.x * 20) + player.touch_offset.x) - 5)
         line.push(((player.pos.y * 20) + player.touch_offset.y) + 5)
         clipToArena(line)
-        context.beginPath()
-        context.moveTo(line[0], line[1])
-        context.lineTo(line[2], line[3])
-        context.stroke()
+        if (line) {
+            context.beginPath()
+            context.moveTo(line[0], line[1])
+            context.lineTo(line[2], line[3])
+            context.stroke()
+        }
 
         // drop hit box
         line = []
@@ -537,28 +551,49 @@ function drawMatrix(matrix, offset) {
     }
 }
 
-// take an array [x1,y1,x2,y2] representing a line to draw and shift to the edges of the game board
-// TODO - make this a proper clip instead of shifting endpoint
+// take an array [x1,y1,x2,y2] representing a line to draw and clip to the edges of the game board
+// if line is completely off the board set line to null
 function clipToArena(line) {
+    // if line is in bounds return immediately
+    if (line[0]>=0 && line[0]<=canvas.width && line[1]>=0 && line[1]<=canvas.height &&
+        line[2]>=0 && line[2]<=canvas.width && line[3]>=0 && line[3]<=canvas.height) {
+            return
+    }
+    // if both endpoints are off the board; set line to null then return
+    if ((line[0]<0 || line[0]>canvas.width) && (line[1]<0 || line[1]>canvas.height) &&
+        (line[2]<0 || line[2]>canvas.width) && (line[3]<0 || line[3]>canvas.height)) {
+            line = null
+            return
+    }
+    // clip the line to edge of the canvas
+    let z = (line[3]-line[1])/(line[2]-line[0])
     if (line[0] < 0) {
+        line[1] = (z*(0-line[0]))+line[1]
         line[0] = 0
     } else if (line[0] > canvas.width) {
+        line[1] = (z*(canvas.width-line[0]))+line[1]
         line[0] = canvas.width    
     }
     if (line[1] < 0) {
+        line[0] = ((0-line[1])/z)+line[0]
         line[1] = 0
     } else if (line[1] > canvas.height) {
+        line[0] = ((canvas.height-line[1])/z)+line[0]
         line[1] = canvas.height    
     }
     if (line[2] < 0) {
+        line[3] = (z*(0-line[2]))+line[3]
         line[2] = 0
     } else if (line[2] > canvas.width) {
-        line[2] = canvas.width    
+        line[3] = (z*(canvas.width-line[2]))+line[3]
+        line[2] = canvas.width
     }
     if (line[3] < 0) {
+        line[2] = ((0-line[3])/z)+line[2]
         line[3] = 0
     } else if (line[3] > canvas.height) {
-        line[3] = canvas.height    
+        line[2] = ((canvas.height-line[3])/z)+line[2]
+        line[3] = canvas.height
     }
 }
 

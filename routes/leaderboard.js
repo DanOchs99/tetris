@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const http = require('http').createServer(router)
+const io = require('socket.io').listen(http)
 
 const db = require("../db")
 
@@ -9,7 +11,11 @@ router.get("/", (req, res) => {
     .then(results => {
         //console.log(results);
         const newResults = results.map((r, index) => {
-            return {...r, rankId: ++index};
+            let hs_date = null;
+            if (r.high_score_date) {
+                hs_date = r.high_score_date.toLocaleDateString("en-US");
+            }
+            return {username: r.username, high_score: r.high_score, high_score_date: hs_date, rankId: ++index};
         });
         //console.log(newResults);
         db.one('SELECT current_score, high_score FROM scores WHERE user_id = $1;', [userId])
@@ -34,4 +40,11 @@ router.get("/", (req, res) => {
     });
 });
 
+// socket.io repeater
+io.on('connection', function (socket) {
+    socket.on('chat message', function (msg) {
+        io.emit('chat message', msg)
+    });
+});
+  
 module.exports = router;
