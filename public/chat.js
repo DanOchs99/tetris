@@ -14,7 +14,7 @@ socket.on("chat message", msg => {
     console.log(msg);
     let messageBox = document.getElementById("messageBox");
     let userMessaging = displayUsername.value
-    messageBox.insertAdjacentHTML("beforeend", `<li>${userMessaging}: ${msg}</li>`);
+    messageBox.insertAdjacentHTML("beforeend", `<li><b>${userMessaging}</b> ${msg}</li>`);
 });
 submitButton.addEventListener("click", event => {
     event.preventDefault();

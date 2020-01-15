@@ -185,7 +185,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('connectUser', function () {
-    io.emit('chat message', `has connected!`)
+    io.emit('chat message', 'has joined the chat')
   })
 });
 
