@@ -139,6 +139,7 @@ app.post("/login", (req, res) => {
           .then(passwordsMatch => {
             if (passwordsMatch) {
               req.session.userId = userLoggingIn.user_id;
+              req.session.username = username;
               req.session.isAuthenticated = true;
               if(devmode) {
                   req.session.devmode = true;

@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
         db.one('SELECT current_score, high_score FROM scores WHERE user_id = $1;', [userId])
         .then(finalResult => {
             //console.log(finalResult)
-            res.render("leaderboard", {userScore: finalResult, scores: newResults})
+            res.render("leaderboard", {username: loggedInUsername, userScore: finalResult, scores: newResults})
         })
         .catch((error) => {
             console.log(error);
