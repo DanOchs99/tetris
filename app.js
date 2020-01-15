@@ -148,8 +148,7 @@ app.post("/login", (req, res) => {
               {
                   req.session.devmode = false;
               }
-              // TODO: change back to "/play"
-              res.redirect("/leaderboard");
+              res.redirect("/play");
             } else {
               res.render("landing", {
                 message:
