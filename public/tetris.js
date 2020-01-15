@@ -387,12 +387,13 @@ function submitScore() {
 
 function updateScore() {
     document.getElementById('showScore').innerHTML = player.score
-    document.getElementById('level').innerHTML = player.level
+    document.getElementById('showLevel').innerHTML = player.level
     document.getElementById('lines').innerHTML = player.lines
 }
 
 function postScore() {
     document.getElementById('score').value = player.score
+    document.getElementById('level').value = player.level
 }
 
 // VIEW FUNCTIONS
