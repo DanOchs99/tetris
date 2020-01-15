@@ -25,7 +25,15 @@ const colors = [
     '#26AE8A',    // 4 = green = 'O'
     '#EABA18',    // 5 = yellow = 'Z'
     '#814494',    // 6 = purple = 'S'
-    '#F6F8FF'     // 7 = white = 'T'
+    '#F6F8FF',     // 7 = white = 'T'
+
+    '#D8681C',    // 8 = darker orange  = J
+    '#21426F',     // 9 = daker blue = L
+    '#AE2721',      // 10 = darker red = I
+    '#198565',      // 11 = darker green = O
+    '#BB9921',       // 12 = darker yellow = z
+    '#74348B'         // 13  = darker purple = s
+
 ]
 
 // this is the model for the static blocks
@@ -115,47 +123,48 @@ function createPiece(type) {
     if (type === 'I') {
         return [
             [0, 1, 0, 0],
+            [0, 10, 0, 0],
             [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
+            [0, 10, 0, 0],
         ]
     } else if (type === 'L') {
         return [
+            [0, 9, 0],
             [0, 2, 0],
-            [0, 2, 0],
-            [0, 2, 2],
+            [0, 9, 2],
         ]
     } else if (type === 'J') {
         return [
+            [0, 8, 0],
             [0, 3, 0],
-            [0, 3, 0],
-            [3, 3, 0],
+            [3, 8, 0],
         ]
     } else if (type === 'O') {
         return [
-            [4, 4],
-            [4, 4],
+            [4, 11],
+            [11, 4],
         ]
     } else if (type === 'Z') {
         return [
-            [5, 5, 0],
-            [0, 5, 5],
+            [12, 5, 0],
+            [0, 12, 5],
             [0, 0, 0],
         ]
     } else if (type === 'S') {
         return [
-            [0, 6, 6],
-            [6, 6, 0],
+            [0, 6, 13],
+            [13, 6, 0],
             [0, 0, 0],
         ]
     } else if (type === 'T') {
         return [
-            [0, 7, 0],
-            [7, 7, 7],
+            [0, 6, 0],
+            [6, 13, 6],
             [0, 0, 0],
         ]
     }
 }
+
 
 function arenaSweep() {
     let rowCount = 1
@@ -413,10 +422,6 @@ function drawMatrixNext(matrix, offset) {
                 contextNext.fillStyle = colors[value]
                 contextNext.fillRect(x1, y1, block_size, block_size)
                 // draw a black border
-                contextNext.lineWidth = 2
-                contextNext.strokeStyle = '#000000'
-                context.beginPath()
-                contextNext.strokeRect(x1, y1, block_size, block_size)
             }
         })
     })
@@ -437,10 +442,6 @@ function drawMatrix(matrix, offset) {
                 context.fillStyle = colors[value]
                 context.fillRect(x1, y1, block_size, block_size)
                 // draw a grey border
-                context.lineWidth = 2
-                context.strokeStyle = '#000000'
-                context.beginPath()
-                context.strokeRect(x1, y1, block_size, block_size)
             }
         })
     })
