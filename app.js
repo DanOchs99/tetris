@@ -12,6 +12,8 @@ const mustacheExpress = require("mustache-express");
 const session = require("express-session");
 const path = require("path");
 
+app.locals.connects = 0
+
 const db = require("./db")
 
 app.use(express.urlencoded({ extended: false }));
@@ -180,7 +182,18 @@ app.post("/login", (req, res) => {
 // socket.io repeater
 io.on('connection', function (socket) {
     socket.on('chat message', function (msg) {
-        io.emit('chat message', msg);
+        if (msg=="USER_JOINED") {
+            app.locals.connects += 1;
+            io.emit('chat message', `UPDATE_CONNECTS:${app.locals.connects}`);
+        }
+        else {
+            io.emit('chat message', msg);
+        }
+    });
+    socket.on('disconnect', function (msg) {
+      app.locals.connects -= 1;
+      io.emit('chat message', `UPDATE_CONNECTS:${app.locals.connects}`);
+      // io.emit('chat message', `SOMEBODY: has left the chat...`);
     });
 });
 
