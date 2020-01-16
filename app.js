@@ -13,6 +13,7 @@ const session = require("express-session");
 const path = require("path");
 
 app.locals.chat_connects = [];
+app.locals.tetris_connects = [];
 
 const db = require("./db")
 
@@ -136,7 +137,8 @@ app.get("/guest", (req,res) => {
     req.session.username = username;
     req.session.isAuthenticated = true;
     req.session.devmode = false;
-    res.redirect("/play");
+    req.session.guestScore = -999;
+    res.redirect("/leaderboard");
 })
 
 app.post("/login", (req, res) => {
@@ -164,7 +166,7 @@ app.post("/login", (req, res) => {
               {
                   req.session.devmode = false;
               }
-              res.redirect("/play");
+              res.redirect("/leaderboard");
             } else {
               res.render("landing", {
                 message:
@@ -204,21 +206,44 @@ io.on('connection', function (socket) {
         if (msg=="USER_JOINED") {
             // this is a join notification - so handle it
             app.locals.chat_connects.push({socket_id: socket.id, username: user});
-            io.emit('chat message', `UPDATE_CONNECTS:${app.locals.chat_connects.length}`);
+            io.emit('chat message', `UPDATE_CHAT_CONNECTS:${app.locals.chat_connects.length}`);
         }
         else {
             // this is a chat message - forward to everybody
             io.emit('chat message', msg_rcvd);
         }
     });
+    socket.on('tetris', function (msg_rcvd) {
+      let n = msg_rcvd.indexOf(':');
+      let user = msg_rcvd.slice(0,n);
+      let msg = msg_rcvd.slice(n+1, msg_rcvd.length)
+      if (msg=="USER_JOINED") {
+          // this is a join notification - so handle it
+          app.locals.tetris_connects.push({socket_id: socket.id, username: user});
+          io.emit('chat message', `UPDATE_TETRIS_CONNECTS:${app.locals.tetris_connects.length}`);
+      }
+      else if (msg=="ADD_ROW") {
+          // this is a multiplayer row send
+          socket.broadcast('tetris', "ADD_ROW")
+      }
+      else {
+          // don't know what this is ... do nothing
+      }
+    });
     socket.on('disconnect', function (msg) {
-      // somebody dropped off the chat
+      // somebody dropped off - need to check both tetris and chat
       // get the user that dropped
       let dropped_user = app.locals.chat_connects.filter(s => s.socket_id == socket.id);
-      // remove the dropped user from the connects list
-      app.locals.chat_connects = app.locals.chat_connects.filter(s => s.socket_id != socket.id);
+      if (dropped_user.length == 0) {
+          dropped_user = app.locals.tetris_connects.filter(s => s.socket_id == socket.id);
+          app.locals.tetris_connects = app.locals.tetris_connects.filter(s => s.socket_id != socket.id);
+      } else {
+          // remove the dropped user from the connects list
+          app.locals.chat_connects = app.locals.chat_connects.filter(s => s.socket_id != socket.id);
+      }
       // make the disconnect notifications
-      io.emit('chat message', `UPDATE_CONNECTS:${app.locals.chat_connects.length}`);
+      io.emit('chat message', `UPDATE_CHAT_CONNECTS:${app.locals.chat_connects.length}`);
+      io.emit('chat message', `UPDATE_TETRIS_CONNECTS:${app.locals.tetris_connects.length}`);
       io.emit('chat message', `${dropped_user[0].username}: has left the chat...`)
     });
 });

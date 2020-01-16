@@ -159,6 +159,10 @@ tbody tr:hover {
   background-color: #DB2F23;
 }
 
+.play-buttons {
+  padding-bottom: 10px;
+}
+
 @media only screen and (max-width: 390px) {
   table {
     position: relative;
@@ -184,5 +188,12 @@ tbody tr:hover {
 
   .best-score {
     padding: 0;
+  }
+}
+
+@media only screen and (max-width: 840px) {
+  
+  .play-buttons {
+    text-align: center;
   }
 }

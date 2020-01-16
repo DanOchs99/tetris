@@ -5,6 +5,7 @@
 	<title>Leaderboard</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
@@ -18,23 +19,28 @@
     <nav class="nav-extended">
       <div class="nav-wrapper">
         <div>
+				<a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 				<ul class="score-ul">
 					<li class="current-score"><h5>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h5></li>
 					<li class="best-score"><h5>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h5></li>
 				</ul>
 				</div>
-        <ul class="right hide-on-small-and-down">
-          <li><a href="/play">Play</a></li>
+        <ul class="right hide-on-med-and-down">
+          <li><a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Single</a></li>
+					<li><a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Multiplayer</a></li>
         </ul>
       </div>
     </nav>
   </div>
-
+	<ul class="sidenav" id="mobile-nav">
+					<li><a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Single</a></li>
+					<li><a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Multiplayer</a></li>
+  			</ul>
 	<div class="limiter">
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100">
-					<table>
+					<table class="z-depth5">
 						<thead>
 							<tr class="table100-head">
 								<th class="column1">Rank</th>
@@ -61,7 +67,8 @@
 			<div class="wrap-chat">
 
 				<input id="displayUsername" type="hidden" value="{{username}}" /> 
-                <div id="numConnects"></div>
+                <div id="numChatConnects">0 users are connected to the chat.</div>
+				<div id="numGameConnects">0 users are playing Tetris.</div>
 				<ul id="messageBox"></ul>
 				<form id="messageInput" action="">
           			<input id="message" value=""/>
@@ -70,10 +77,15 @@
 			</div>
 		</div>
 	</div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/chat.js"></script>
-
+<script>
+	$(document).ready(function(){
+    $('.sidenav').sidenav();
+  });
+</script>
 </body>
 
 </html>
