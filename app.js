@@ -242,7 +242,7 @@ io.on('connection', function (socket) {
           app.locals.chat_connects = app.locals.chat_connects.filter(s => s.socket_id != socket.id);
       }
       // make the disconnect notifications
-      io.emit('chat message', `UPDATE_CONNECTS:${app.locals.chat_connects.length}`);
+      io.emit('chat message', `UPDATE_CHAT_CONNECTS:${app.locals.chat_connects.length}`);
       io.emit('chat message', `UPDATE_TETRIS_CONNECTS:${app.locals.tetris_connects.length}`);
       io.emit('chat message', `${dropped_user[0].username}: has left the chat...`)
     });
