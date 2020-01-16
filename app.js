@@ -61,6 +61,12 @@ app.post("/register", (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
 
+    if (username == "guest") {
+        // don't allow user "guest" to be created
+        req.session.destroy();
+        res.render("landing", {message: "Please choose a different user name."});
+    }
+
     db.any("SELECT user_id, username, password FROM users")
     .then(results => {
         // verify that the username does not exist
@@ -122,6 +128,16 @@ app.get("/registration", (req, res) => {
 app.get("/login", (req, res) => {
   res.render("login");
 });
+
+app.get("/guest", (req,res) => {
+    // play as guest route
+    const username = "guest"
+    req.session.userId = -999;
+    req.session.username = username;
+    req.session.isAuthenticated = true;
+    req.session.devmode = false;
+    res.redirect("/play");
+})
 
 app.post("/login", (req, res) => {
   const username = req.body.username;

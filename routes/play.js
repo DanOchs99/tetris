@@ -12,6 +12,12 @@ router.post("/submitScore", (req, res) => {
   const userLevel = req.body.recordLevel;
   const userId = req.session.userId;
 
+  // check for guest user
+  if (userId == -999) {
+    req.session.guestScore = userScore;
+    res.redirect("/leaderboard");
+  }
+
   // get high score for this user
   db.one("SELECT high_score FROM scores WHERE user_id = $1;", [userId]).then(
     score => {
