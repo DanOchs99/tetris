@@ -12,6 +12,8 @@ const canvasNext = document.getElementById('nextPiece')
 const context = canvas.getContext('2d')
 const contextNext = canvasNext.getContext('2d')
 
+const socket = io()
+
 const rot_counterclock_button = document.getElementById('rot_counterclock_button')
 const fast_drop_button = document.getElementById('fast_drop_button')
 const rot_clockwise_button = document.getElementById('rot_clockwise_button')
@@ -186,8 +188,35 @@ function arenaSweep() {
         if (player.lines%3===0) {
             player.level++
         }
+        sendRow()
     }
 }
+
+// add a random row to bottom of arena
+function addRow() {
+    if (badrowCounter > badrowInterval) {
+        arena.shift()
+        // TODO: randomize the zero element
+        const badRow = [14,14,14,14,14,14,14,14,0,14,14,14]
+        arena.push(badRow)
+
+        badrowCounter = 0
+
+        refreshView = true
+    }      
+}
+
+// broadcast an add row message to other players
+function sendRow() {
+    socket.broadcast.emit('tetris', "ADD_ROW")
+}
+
+// receiver for add row messages
+socket.on('tetris', (msg_rcvd) => {
+    if (msg_rcvd == "ADD_ROW") {
+        addRow();
+    }
+})
 
 function createMatrix(w, h) {
     const matrix = []
@@ -601,6 +630,8 @@ function clipToArena(line) {
 // game initialization
 let dropCounter = 0
 let dropInterval = 0 // this gets set in playerDrop
+let badrowCounter = 0
+let badrowInterval = 5000 // 5 seconds
 let lastTime = 0
 let refreshView = true
 let inPlayerReset = false
@@ -620,6 +651,8 @@ function update(time = 0) {
     if (dropCounter > dropInterval) {    // time to move the falling piece
         playerDrop()
     }
+
+    badrowCounter += deltaTime
 
     if (DEBUG_MOBILEUI) {
         let curr_sec = Math.floor(time / 1000)
