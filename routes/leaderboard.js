@@ -42,7 +42,12 @@ router.get("/", (req, res) => {
     }
     else {
         // this is guest user
-        let guestScore = req.session.guestScore
+        if (req.session.guestScore == -999) {
+            var guestScore = '---'
+        }
+        else {
+            var guestScore = req.session.guestScore
+        }
         db.any("SELECT username, high_score, high_level, high_score_date FROM users, scores WHERE users.user_id = scores.user_id ORDER BY high_score DESC LIMIT 10;")
         .then(results => {
             const newResults = results.map((r, index) => {
