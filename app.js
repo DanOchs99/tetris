@@ -24,10 +24,8 @@ app.use(
   })
 );
 
-app.use(express.urlencoded({ extended: false }));
-
 app.use(express.static("public"));
-app.use('/socket.io', express.static("socket.io"))
+app.use('/socket.io', express.static("node_modules/socket.io-client/dist"))
 
 function authenticate(req, res, next) {
   if (req.session) {
