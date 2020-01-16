@@ -217,7 +217,6 @@ io.on('connection', function (socket) {
       let n = msg_rcvd.indexOf(':');
       let user = msg_rcvd.slice(0,n);
       let msg = msg_rcvd.slice(n+1, msg_rcvd.length)
-      console.log(`"${user}" "${msg}"`)
       if (msg=="USER_JOINED") {
           // this is a join notification - so handle it
           app.locals.tetris_connects.push({socket_id: socket.id, username: user});
