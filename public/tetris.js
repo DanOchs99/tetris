@@ -208,7 +208,7 @@ function addRow() {
 
 // broadcast an add row message to other players
 function sendRow() {
-    socket.broadcast.emit('tetris', "ADD_ROW")
+    socket.emit('tetris', "USER:ADD_ROW")
 }
 
 // receiver for add row messages
@@ -216,6 +216,12 @@ socket.on('tetris', (msg_rcvd) => {
     if (msg_rcvd == "ADD_ROW") {
         addRow();
     }
+})
+
+// send connect message 
+socket.on('connect', function () {
+    // send a connect message
+    socket.emit('tetris', `USER:USER_JOINED`);
 })
 
 function createMatrix(w, h) {

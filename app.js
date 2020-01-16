@@ -224,7 +224,7 @@ io.on('connection', function (socket) {
       }
       else if (msg=="ADD_ROW") {
           // this is a multiplayer row send
-          socket.broadcast('tetris', "ADD_ROW")
+          socket.broadcast.emit('tetris', "ADD_ROW")
       }
       else {
           // don't know what this is ... do nothing
