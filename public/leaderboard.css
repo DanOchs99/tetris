@@ -45,7 +45,7 @@ input:focus {
 .container-table100 {
   width: 100%;
   min-height: 100vh;
-  background: #c850c0;
+  background: #b13b31;
 
   display: flex;
   justify-content: center;
@@ -76,7 +76,7 @@ table th {
 }
 table thead tr {
   height: 40px;
-  background: #36304a;
+  background: #263238;
 }
 table tbody tr {
   height: 70px;
@@ -86,7 +86,7 @@ table tbody tr:last-child {
 }
 table td,
 table th {
-  text-align: left;
+  text-align: center;
 }
 table td.l,
 table th.l {
@@ -125,8 +125,8 @@ tbody tr:hover {
 }
 
 .column1 {
-  width: 60px;
-  padding-left: 40px;
+  width: 30px;
+  padding-left: 10px;
 }
 
 .column2 {
@@ -138,58 +138,62 @@ tbody tr:hover {
 }
 
 .column4 {
-  width: 110px;
-  padding-right: 40px;
+  width: 90px;
 }
 
-@media screen and (max-width: 992px) {
+.column5 {
+  width: 110px;
+}
+
+.current-score {
+  padding-left: 25px;
+}
+
+.best-score {
+ padding-left: 25px;
+}
+.nav-wrapper {
+  background-color: #DB2F23;
+}
+.nav-extended {
+  background-color: #DB2F23;
+}
+
+.play-buttons {
+  padding-bottom: 10px;
+}
+
+@media only screen and (max-width: 390px) {
   table {
-    display: block;
-  }
-  table > *,
-  table tr,
-  table td,
-  table th {
-    display: block;
-  }
-  table thead {
-    display: none;
-  }
-  table tbody tr {
-    height: auto;
-    padding: 37px 0;
-  }
-  table tbody tr td {
-    padding-left: 40% !important;
-    margin-bottom: 24px;
-  }
-  table tbody tr td:last-child {
-    margin-bottom: 0;
-  }
-  table tbody tr td:before {
-    font-size: 14px;
-    color: #999999;
-    line-height: 1.2;
-    font-weight: unset;
-    position: absolute;
-    width: 40%;
-    left: 30px;
-    top: 0;
-  }
-  table tbody tr td:nth-child(1):before {
-    content: "Rank";
-  }
-  table tbody tr td:nth-child(2):before {
-    content: "User";
-  }
-  table tbody tr td:nth-child(3):before {
-    content: "Score";
-  }
-  table tbody tr td:nth-child(4):before {
-    content: "Date";
+    position: relative;
+    top: 25px;
   }
 
-  tbody tr {
-    font-size: 14px;
+  .current-score {
+    position: relative;
+    left: 27%;
+  }
+  .best-score {
+    position: relative;
+    left: 19%;
+  }
+
+}
+
+@media only screen and (max-width: 420px) {
+  .current-score {
+    padding-left: 10px;
+    padding-right: 15px;
+  }
+
+  .best-score {
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width: 840px) {
+  
+  .play-buttons {
+    text-align: center;
   }
 }

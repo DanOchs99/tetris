@@ -5,29 +5,54 @@
 	<title>Leaderboard</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
 	<link rel="stylesheet" type="text/css" href="leaderboard.css">
 
 </head>
 
 <body>
+
+	<div class="navbar-fixed">
+    <nav class="nav-extended">
+      <div class="nav-wrapper">
+        <div>
+				<a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul class="score-ul">
+					<li class="current-score"><h5>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h5></li>
+					<li class="best-score"><h5>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h5></li>
+				</ul>
+				</div>
+        <ul class="right hide-on-med-and-down">
+          <form method="POST" action="/play">
+		    <input type="hidden" name="mode" value="single">
+            <li><button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Single</button></li>
+          </form>
+		  <form method="POST" action="/play">
+		    <input type="hidden" name="mode" value="multi">
+			<li><button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Multiplayer</button></li>
+          </form>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <ul class="sidenav" id="mobile-nav">
+    <form method="POST" action="/play">
+      <input type="hidden" name="mode" value="single">
+	  <li><button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Single</button></li>
+    </form>
+    <form method="POST" action="/play">
+      <input type="hidden" name="mode" value="multi">
+	  <li><button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Multiplayer</button></li>
+    </form>
+  </ul>
 	<div class="limiter">
-		<h1>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h1>
-		<h1>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h1>
-        <div play-buttons>
-		  <form method="POST" action="/play">
-		      <input type="hidden" name="mode" value="single">
-              <button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Single</button>
-		  </form>
-		  <form method="POST" action="/play">
-		      <input type="hidden" name="mode" value="multi">
-              <button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Multiplayer</button>
-		  </form>
-        </div>
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100">
-					<table>
+					<table class="z-depth5">
 						<thead>
 							<tr class="table100-head">
 								<th class="column1">Rank</th>
@@ -64,10 +89,15 @@
 			</div>
 		</div>
 	</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/chat.js"></script>
-
+<script>
+	$(document).ready(function(){
+    $('.sidenav').sidenav();
+  });
+</script>
 </body>
 
 </html>
