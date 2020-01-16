@@ -1,3 +1,10 @@
+// play mode - multi = multiplayer   single = do not accept rows from other players
+const playmode = document.getElementById('playmode')
+let MULTIPLAYER_MODE = false
+if (playmode.value == 'multi') {
+    MULTIPLAYER_MODE = true
+}
+
 // false = standard mode; true = enable mobile ui debugging outputs
 const devmode_switch = document.getElementById('devmode')
 let DEBUG_MOBILEUI = false
@@ -213,7 +220,7 @@ function sendRow() {
 
 // receiver for add row messages
 socket.on('tetris', (msg_rcvd) => {
-    if (msg_rcvd == "ADD_ROW") {
+    if (msg_rcvd == "ADD_ROW" && MULTIPLAYER_MODE) {
         addRow();
     }
 })

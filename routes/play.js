@@ -3,8 +3,8 @@ const router = express.Router();
 
 const db = require("../db")
 
-router.get("/", (req, res) => {
-  res.render("game",{devmode: req.session.devmode});
+router.post("/", (req, res) => {
+  res.render("game",{playmode: req.body.mode, devmode: req.session.devmode});
 });
 
 router.post("/submitScore", (req, res) => {

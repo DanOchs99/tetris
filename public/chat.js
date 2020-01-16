@@ -6,6 +6,9 @@ const displayUsername = document.getElementById("displayUsername")
 const numChatConnects = document.getElementById("numChatConnects")
 const numGameConnects = document.getElementById("numGameConnects")
 
+const playSingleButton = document.getElementById("playSingleButton")
+const playMultiButton = document.getElementById("playMultiButton")
+
 socket.on('connect', function () {
     // send a connect message
     socket.emit('chat message', `${displayUsername.value}: connected to the chat...`);

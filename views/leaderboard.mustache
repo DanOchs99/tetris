@@ -15,8 +15,14 @@
 		<h1>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h1>
 		<h1>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h1>
         <div play-buttons>
-          <a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Single</a>
-          <a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Multiplayer</a>
+		  <form method="POST" action="/play">
+		      <input type="hidden" name="mode" value="single">
+              <button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Single</button>
+		  </form>
+		  <form method="POST" action="/play">
+		      <input type="hidden" name="mode" value="multi">
+              <button type="submit" class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3">Play Multiplayer</button>
+		  </form>
         </div>
 		<div class="container-table100">
 			<div class="wrap-table100">
