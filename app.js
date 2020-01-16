@@ -12,7 +12,7 @@ const mustacheExpress = require("mustache-express");
 const session = require("express-session");
 const path = require("path");
 
-app.locals.connects = 0
+app.locals.chat_connects = [];
 
 const db = require("./db")
 
@@ -181,19 +181,29 @@ app.post("/login", (req, res) => {
 
 // socket.io repeater
 io.on('connection', function (socket) {
-    socket.on('chat message', function (msg) {
+    socket.on('chat message', function (msg_rcvd) {
+        let n = msg_rcvd.indexOf(':');
+        let user = msg_rcvd.slice(0,n);
+        let msg = msg_rcvd.slice(n+1, msg_rcvd.length)
         if (msg=="USER_JOINED") {
-            app.locals.connects += 1;
-            io.emit('chat message', `UPDATE_CONNECTS:${app.locals.connects}`);
+            // this is a join notification - so handle it
+            app.locals.chat_connects.push({socket_id: socket.id, username: user});
+            io.emit('chat message', `UPDATE_CONNECTS:${app.locals.chat_connects.length}`);
         }
         else {
-            io.emit('chat message', msg);
+            // this is a chat message - forward to everybody
+            io.emit('chat message', msg_rcvd);
         }
     });
     socket.on('disconnect', function (msg) {
-      app.locals.connects -= 1;
-      io.emit('chat message', `UPDATE_CONNECTS:${app.locals.connects}`);
-      // io.emit('chat message', `SOMEBODY: has left the chat...`);
+      // somebody dropped off the chat
+      // get the user that dropped
+      let dropped_user = app.locals.chat_connects.filter(s => s.socket_id == socket.id);
+      // remove the dropped user from the connects list
+      app.locals.chat_connects = app.locals.chat_connects.filter(s => s.socket_id != socket.id);
+      // make the disconnect notifications
+      io.emit('chat message', `UPDATE_CONNECTS:${app.locals.chat_connects.length}`);
+      io.emit('chat message', `${dropped_user[0].username}: has left the chat...`)
     });
 });
 
