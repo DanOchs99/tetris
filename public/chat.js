@@ -3,7 +3,8 @@ const submitButton = document.getElementById("submitButton");
 const socket = io();
 const messageInput = document.getElementById("messageInput");
 const displayUsername = document.getElementById("displayUsername")
-const numConnects = document.getElementById("numConnects")
+const numChatConnects = document.getElementById("numChatConnects")
+const numGameConnects = document.getElementById("numGameConnects")
 
 socket.on('connect', function () {
     // send a connect message
@@ -19,14 +20,23 @@ socket.on('chat message', (msg_rcvd) => {
     let user = msg_rcvd.slice(0,n);
     let msg = msg_rcvd.slice(n+1, msg_rcvd.length)
 
-    if (user == "UPDATE_CONNECTS") {
-        // update the connects display
+    if (user == "UPDATE_CHAT_CONNECTS") {
+        // update the chat connects display
         if (msg == '1') {
-            numConnects.innerHTML = `${msg} user is connected to the chat.`
+            numChatConnects.innerHTML = `${msg} user is connected to the chat.`
         }
         else {
-            numConnects.innerHTML = `${msg} users are connected to the chat.`
+            numChatConnects.innerHTML = `${msg} users are connected to the chat.`
         }
+    }
+    else if (user == "UPDATE_GAME_CONNECTS") {
+            // update the game connects display
+            if (msg == '1') {
+                numGameConnects.innerHTML = `${msg} user is playing Tetris.`
+            }
+            else {
+                numGameConnects.innerHTML = `${msg} users are playing Tetris.`
+            }
     }
     else {
         // push message to the display

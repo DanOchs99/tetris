@@ -5,7 +5,7 @@
 	<title>Leaderboard</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 	<link rel="stylesheet" type="text/css" href="leaderboard.css">
 
 </head>
@@ -14,7 +14,10 @@
 	<div class="limiter">
 		<h1>Your Score: {{#userScore}}{{current_score}}{{/userScore}}</h1>
 		<h1>Your Best Score: {{#userScore}}{{high_score}}{{/userScore}}</h1>
-
+        <div play-buttons>
+          <a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Single</a>
+          <a class="waves-effect waves-dark btn-large white red-text text-darken-4 z-depth-3" href="/play">Play Multiplayer</a>
+        </div>
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100">
@@ -45,7 +48,8 @@
 			<div class="wrap-chat">
 
 				<input id="displayUsername" type="hidden" value="{{username}}" /> 
-                <div id="numConnects"></div>
+                <div id="numChatConnects">0 users are connected to the chat.</div>
+				<div id="numGameConnects">0 users are playing Tetris.</div>
 				<ul id="messageBox"></ul>
 				<form id="messageInput" action="">
           			<input id="message" value=""/>
@@ -54,7 +58,7 @@
 			</div>
 		</div>
 	</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/chat.js"></script>
 
