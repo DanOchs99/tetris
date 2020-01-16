@@ -217,10 +217,11 @@ io.on('connection', function (socket) {
       let n = msg_rcvd.indexOf(':');
       let user = msg_rcvd.slice(0,n);
       let msg = msg_rcvd.slice(n+1, msg_rcvd.length)
+      console.log(`"${user}" "${msg}"`)
       if (msg=="USER_JOINED") {
           // this is a join notification - so handle it
           app.locals.tetris_connects.push({socket_id: socket.id, username: user});
-          io.emit('chat message', `UPDATE_TETRIS_CONNECTS:${app.locals.tetris_connects.length}`);
+          io.emit('chat message', `UPDATE_GAME_CONNECTS:${app.locals.tetris_connects.length}`);
       }
       else if (msg=="ADD_ROW") {
           // this is a multiplayer row send
@@ -240,11 +241,11 @@ io.on('connection', function (socket) {
       } else {
           // remove the dropped user from the connects list
           app.locals.chat_connects = app.locals.chat_connects.filter(s => s.socket_id != socket.id);
+          io.emit('chat message', `${dropped_user[0].username}: has left the chat...`)
       }
       // make the disconnect notifications
       io.emit('chat message', `UPDATE_CHAT_CONNECTS:${app.locals.chat_connects.length}`);
-      io.emit('chat message', `UPDATE_TETRIS_CONNECTS:${app.locals.tetris_connects.length}`);
-      io.emit('chat message', `${dropped_user[0].username}: has left the chat...`)
+      io.emit('chat message', `UPDATE_GAME_CONNECTS:${app.locals.tetris_connects.length}`);
     });
 });
 
