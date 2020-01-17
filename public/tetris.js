@@ -41,8 +41,8 @@ const colors = [
     '#AE2721',      // 10 = darker red = I
     '#198565',      // 11 = darker green = O
     '#BB9921',       // 12 = darker yellow = z
-    '#74348B'         // 13  = darker purple = s
-
+    '#74348B',         // 13  = darker purple = s
+    '#808080'      // 14 = grey for badRow
 ]
 
 // this is the model for the static blocks
@@ -203,8 +203,10 @@ function arenaSweep() {
 function addRow() {
     if (badrowCounter > badrowInterval) {
         arena.shift()
-        // TODO: randomize the zero element
-        const badRow = [14,14,14,14,14,14,14,14,0,14,14,14]
+
+        let badRow = [14,14,14,14,14,14,14,14,14,14,14,14]
+        let randomHole = Math.floor(12 * Math.random())
+        badRow[randomHole] = 0
         arena.push(badRow)
 
         badrowCounter = 0
